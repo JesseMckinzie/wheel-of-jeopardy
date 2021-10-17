@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-&fwq(@z%g3b5(&&l@4y!t%o@$aghb357k3-=!&jg7kj)-d-ck5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'main_app.apps.MainAppConfig',
+    'main_app',
     'channels'
 ]
 
@@ -71,6 +71,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'WheelOfJeopardy.wsgi.application'
+ASGI_APPLICATION = 'WheelOfJeopardy.wsgi.application'
 
 
 # Database
@@ -78,12 +79,8 @@ WSGI_APPLICATION = 'WheelOfJeopardy.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': '1542',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -133,11 +130,11 @@ STATICFILES_DIRS = [
 ]
 
 
-CHANNEL_LARERS = {
-    "default": {
-        "BACKEND": "asgiref.inmemory.ChannelLayer",
-        "ROUTING": "channels_obstruction.routing.channel_routing",
-    },
+CHANNEL_LAYERS = {
+ "default": {
+ "BACKEND": "asgiref.inmemory.ChannelLayer",
+ "ROUTING": "channels_obstruction.routing.channel_routing",
+ },
 }
 
 
