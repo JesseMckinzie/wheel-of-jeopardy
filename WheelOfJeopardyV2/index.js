@@ -4,6 +4,8 @@ const http = require('http')
 const https = require('https')
 const socketio = require('socket.io')
 const { unescape } = require('querystring')
+const fs = require('fs')
+const { response } = require('express')
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -35,6 +37,8 @@ io.on("connect", socket => {
     console.log('Player has connected');
 })
 
+let theQuestion = '';
+
 https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986', res => {
     let data = [];
 
@@ -44,9 +48,10 @@ https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=
 
     res.on('end', () => {
         const question = JSON.parse(Buffer.concat(data).toString());
-        const theQuestion = unescape(question.results[0].question)
-
+        theQuestion = unescape(question.results[0].question)
         console.log(theQuestion);
     });
 
 });
+
+
