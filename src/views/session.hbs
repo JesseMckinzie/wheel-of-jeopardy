@@ -7,9 +7,22 @@
     <link rel="stylesheet" href="../public/stylesheets/style.css">
   </head>
   <body>
-    <p>{{question}}</p>
-    <p>{{answer}}</p>
+    <h1>Wheel of Jeopardy</h1>
     <form action="/session">
+        <p>{{question}}</p>
+        <input type="radio" id="answer_a" name="answer_choice" value="a">
+        <label for="answer_a">a )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_b" name="answer_choice" value="b">
+        <label for="answer_b">b )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_c" name="answer_choice" value="c">
+        <label for="answer_c">c )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_d" name="answer_choice" value="d">
+        <label for="answer_d">d )  {{answer}}</label><br>
+
+        <br>
         <input id="buttonId" type="submit">
     </form>
   </body>
