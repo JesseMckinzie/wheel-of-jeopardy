@@ -14,7 +14,16 @@ const getQuestion = async() => {
 
 /* GET home page. */
 router.get(`/`, async(req, res) => {
-    res.render('index', await getQuestion())
+    res.render('index')
+});
+// get data from client
+router.post('/api', (req, res) => {
+    console.log(req.body);
+});
+
+/* GET game session. */
+router.get(`/session`, async(req, res) => {
+    res.render('session', await getQuestion())
 });
 
 module.exports = router;

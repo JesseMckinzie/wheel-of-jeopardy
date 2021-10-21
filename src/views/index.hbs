@@ -4,13 +4,36 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="../public/stylesheets/style.css">
 </head>
 <body>
-    <p>{{question}}</p>
-    <p>{{answer}}</p>
-    <form action="/">
-        <input id="buttonId" type="submit">
+    <h1>Wheel of Jeopardy</h1>
+    {{!-- User account login form --}}
+    <form>
+    <label for="uname">u s e r n a m e :  </label>
+    <input type="text" id="uname" name="uname"><br><br>
+    <label for="email">e m a i l :  </label>
+    <input type="text" id="email" name="email"><br>
     </form>
+    <button type="button" onclick="clickHandler()">e n t e r</button>
+    
+    {{!-- Login button click handler --}}
+    <script>
+      function clickHandler() {
+        var userName = document.getElementById("uname").value;
+        var email = document.getElementById("email").value;
+        const data = { userName, email };
+        const options = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        };
+        fetch('/api', options)
+      }
+    </script>
+
 </body>
 </html>
