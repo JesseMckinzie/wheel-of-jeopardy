@@ -11,6 +11,7 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, "public"))); // static folder
+app.use(express.json({limit: '1mb'})); // parse client POST requests
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -57,6 +58,18 @@ https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=
 
 });
 
+var theAnswer = "hello world";
+
 app.get("/", (req, res) => {
-    res.render('index', {theQuestion: theQuestion})
+    res.render('index', {theQuestion: theQuestion, theAnswer:theAnswer})
+});
+
+// main game page
+app.get("/game", (req, res) => {
+    res.render('session')
+});
+
+// get data from client
+app.post('/api', (req, res) => {
+    console.log(req.body);
 });
