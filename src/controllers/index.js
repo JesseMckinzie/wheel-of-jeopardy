@@ -1,29 +1,40 @@
 const express = require('express');
 const router = express.Router();
-const https = require('https')
+// const https = require('https')
+const axios = require('axios')
 
-let theQuestion;
-let theAnswer = "hello world";
+// let theQuestion = ``;
+// let theAnswer = ``;
 
-https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986', res => {
-    let data = [];
+const getQuestion = async() => {
 
-    res.on('data', chunk => {
-        data.push(chunk);
-    });
 
-    res.on('end', () => {
-        const question = JSON.parse(Buffer.concat(data).toString());
-        theQuestion = unescape(question.results[0].question)
+    // await https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986', res => {
+    //     let data = [];
 
-        console.log(theQuestion);
-    });
-});
+    //     res.on('data', chunk => {
+    //         data.push(chunk);
+    //     });
 
+    //     res.on('end', () => {
+    //         const question = JSON.parse(Buffer.concat(data).toString());
+    //         theQuestion = unescape(question.results[0].question)
+
+    //         console.log(theQuestion);
+    //     });
+    // });
+
+    let response = await axios(`https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986`)
+    response = response.data.results[0];
+    question = unescape(response.question);
+    answer = unescape(response.correct_answer);
+
+    return {question, answer};
+}
 
 /* GET home page. */
-router.get(`/`, (req, res) => {
-    res.render('index', {theQuestion: theQuestion, theAnswer:theAnswer})
+router.get(`/`, async(req, res) => {
+    res.render('index', await getQuestion())
 });
 
 module.exports = router;
