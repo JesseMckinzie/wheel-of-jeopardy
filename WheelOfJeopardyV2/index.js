@@ -4,6 +4,10 @@ const http = require('http')
 const https = require('https')
 const socketio = require('socket.io')
 const { unescape } = require('querystring')
+var jsdom = require('jsdom');
+$ = require('jquery')(new jsdom.JSDOM().window);
+//var hbs = require('express-handlebars');
+
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -39,24 +43,50 @@ io.on("connect", socket => {
     console.log('Player has connected');
 })
 */
-var theQuestion
+var theQuestion;
+//var question;
+function getQuestion() {
+    // https.get('https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple&encode=url3986', res => { //10 questions
+    https.get('https://opentdb.com/api.php?amount=1&difficulty=easy&type=multiple&encode=url3986', res => { // 1 question
+        let data = [];
 
-https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986', res => {
-    let data = [];
+        res.on('data', chunk => {
+            data.push(chunk);
+        });
 
-    res.on('data', chunk => {
-        data.push(chunk);
+        res.on('end', () => {
+            var question = JSON.parse(Buffer.concat(data).toString());
+            //theQuestion = question; // multiple questions
+            
+            theQuestion = unescape(question.results[0].question) // 1 question
+            
+            //console.log(theQuestion);
+        });
+
     });
 
-    res.on('end', () => {
-        const question = JSON.parse(Buffer.concat(data).toString());
-        theQuestion = unescape(question.results[0].question)
+    console.log(theQuestion)
 
-        console.log(theQuestion);
+    // var rand = Math.floor(Math.random() * theQuestion.length)
+
+    app.get("/", (req, res) => {
+        res.render('index', {theQuestion: theQuestion})
     });
+}
 
+getQuestion();
+
+$('#buttonId').click(function(){
+    alert("clicked")
 });
 
-app.get("/", (req, res) => {
-    res.render('index', {theQuestion: theQuestion})
-});
+/*
+var myTemplate = $('#myTempId').html();
+var compiled = Handlebars.compile(myTemplate);
+
+$('#buttonId').click(function(){
+    $('#containerId').html(compiled({theQuestion: unescape(theQuestion.results[rand].question)}))
+})
+*/
+
+
