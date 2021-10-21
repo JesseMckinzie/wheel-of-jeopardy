@@ -1,5 +1,6 @@
+import { theQuestion } from "..";
 
-
-const socket = io();
-
+window.onload = function(){
+    document.getElementById("question").innerHTML = '<h1>theQuestion</h1>';
+}
 

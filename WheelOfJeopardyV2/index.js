@@ -4,8 +4,6 @@ const http = require('http')
 const https = require('https')
 const socketio = require('socket.io')
 const { unescape } = require('querystring')
-const fs = require('fs')
-const { response } = require('express')
 
 const PORT = process.env.PORT || 3000;
 const app = express();
@@ -14,12 +12,16 @@ const io = socketio(server);
 
 app.use(express.static(path.join(__dirname, "public"))); // static folder
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'hbs');
+
 server.listen(PORT, () => console.log(`Running on port ${PORT}`));// start server
 
 // Socket request
 
 const connections = [null, null, null];
 
+/*
 io.on("connect", socket => {
     let playerIdx = -1;
     
@@ -36,8 +38,8 @@ io.on("connect", socket => {
     socket.emit('player-number', playerIdx);
     console.log('Player has connected');
 })
-
-let theQuestion = '';
+*/
+var theQuestion
 
 https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986', res => {
     let data = [];
@@ -49,9 +51,12 @@ https.get('https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=
     res.on('end', () => {
         const question = JSON.parse(Buffer.concat(data).toString());
         theQuestion = unescape(question.results[0].question)
+
         console.log(theQuestion);
     });
 
 });
 
-
+app.get("/", (req, res) => {
+    res.render('index', {theQuestion: theQuestion})
+});
