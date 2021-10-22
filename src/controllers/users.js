@@ -7,7 +7,7 @@ router.get('/', (req, res, next) => {
   res.send('respond with a resource');
 });
 
-
+/*
 const User = database.define(
   'users',
   {
@@ -28,5 +28,5 @@ User.readAll = async (req, res) => {
 };
 
 module.exports = User;
-
+*/
 module.exports = router;
