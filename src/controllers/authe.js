@@ -16,9 +16,6 @@ router.post('/api', (req, res) => {
 
 
     db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
-        result = JSON.stringify(result);
-        result = JSON.parse(result)[0];
-        console.log(result.username);
         if(result.length == 0) {
             var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
 
@@ -27,6 +24,8 @@ router.post('/api', (req, res) => {
                 console.log('User has been added to database.');
             });
         } else {
+            result = JSON.stringify(result);
+            result = JSON.parse(result)[0];
             if(result.email === email) {
                 //throw username already associated with another email error
                 console.log("Log in successful!")
