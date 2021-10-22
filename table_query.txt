@@ -1,0 +1,8 @@
+USE applications;
+
+CREATE TABLE users(
+   id INT NOT NULL AUTO_INCREMENT,
+   username VARCHAR(10) NOT NULL UNIQUE,
+   email VARCHAR(40) NOT NULL UNIQUE,
+   PRIMARY KEY ( id )
+);
