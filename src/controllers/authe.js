@@ -25,6 +25,7 @@ router.post('/api', (req, res) => {
             db.query(command, (err, result) => {
                 if (err) throw err;
                 console.log('User has been added to database.');
+                res.redirect('/game')
             });
         } else {
             result = JSON.stringify(result);
@@ -38,6 +39,7 @@ router.post('/api', (req, res) => {
                 res.redirect('/game')
             } else {
                 console.log("Incorrect username or email.")
+                res.redirect('/')
             } 
         }
     });
