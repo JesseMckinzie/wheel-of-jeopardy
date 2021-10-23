@@ -19,7 +19,7 @@ div {
   text-align: right;
   font: "Times New Roman";
 }
-button {
+#submit_button {
   margin-left: 150px;
   margin-top: 20px;
   font: "Times New Roman";
