@@ -29,6 +29,8 @@
       var form = document.getElementById('form');
       var input = document.getElementById('input');
 
+      socket.emit('chat message', `{{user}} is in the chat`)
+
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         if (input.value) {
