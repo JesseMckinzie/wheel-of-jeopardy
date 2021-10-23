@@ -4,6 +4,7 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const jwt = require("jsonwebtoken");
 
 const autheRouter = require('./controllers/authe');
 const usersRouter = require('./controllers/users');
@@ -11,6 +12,24 @@ const gameRouter = require('./controllers/game');
 const chatRouter = require('./controllers/chat');
 
 const app = express();
+
+const verifyToken = (req, res, next) => {
+  let token = req.cookies.jwt;
+  // COOKIE PARSER GIVES YOU A .cookies PROP, WE NAMED OUR TOKEN jwt
+  console.log("Cookies: ", req.cookies.jwt);
+
+  jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+    if (err || !decodedUser) {
+      // return res.status(401).json({ error: "Unauthorized Request" });
+      return res.render('authe.hbs');
+    }
+    req.user = decodedUser;
+    // ADDS A .user PROP TO REQ FOR TOKEN USER
+    console.log(decodedUser);
+
+    next();
+  });
+};
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,13 +42,15 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", (req, res) => {
-  res.render("authe.hbs")
+  verifyToken(req, res, () =>
+    res.redirect("game")
+  );
 });
 
 app.use('/', autheRouter);
-app.use('/users', usersRouter);
-app.use('/game', gameRouter);
-app.use('/chat', chatRouter);
+app.use('/users', verifyToken, usersRouter);
+app.use('/game', verifyToken, gameRouter);
+app.use('/chat', verifyToken, chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

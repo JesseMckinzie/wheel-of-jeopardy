@@ -3,11 +3,32 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios')
 const db = require('../database/database')
+const jwt = require("jsonwebtoken");
+
+
+const createToken = (username, email) => {
+    return jwt.sign(
+        {
+          username: username,
+          email: email
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "30 days",
+        }
+    );
+}
 
 
 /* GET home page. */
 router.get(`/`, async(req, res) => {
     res.render('authe')
+});
+
+// SIGN OUT ROUTE
+router.get("/logout", (req, res) => {
+    res.clearCookie("jwt");
+    res.redirect("/");
 });
 
 var i = 1;
@@ -25,6 +46,10 @@ router.post('/api', (req, res) => {
             db.query(command, (err, result) => {
                 if (err) throw err;
                 console.log('User has been added to database.');
+
+                const token = createToken(userName, email)
+                res.cookie("jwt", token);
+
                 res.redirect('/game')
             });
         } else {
@@ -35,6 +60,9 @@ router.post('/api', (req, res) => {
                 console.log("Log in successful!")
                 console.log(`Player ${i} (${userName}) has connected.`);
                 ++i;
+
+                const token = createToken(userName, email)
+                res.cookie("jwt", token);
                 
                 res.redirect('/game')
             } else {
