@@ -33,7 +33,7 @@ router.post('/api', (req, res) => {
             if(result.email === email) {
                 //throw username already associated with another email error
                 console.log("Log in successful!")
-                console.log("Player " + i + " has connected.");
+                console.log(`Player ${i} (${userName}) has connected.`);
                 ++i;
                 
                 res.redirect('/game')
