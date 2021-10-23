@@ -7,6 +7,7 @@ const logger = require('morgan');
 const autheRouter = require('./controllers/authe');
 const usersRouter = require('./controllers/users');
 const gameRouter = require('./controllers/game');
+const chatRouter = require('./controllers/chat');
 
 const app = express();
 
@@ -22,7 +23,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', autheRouter);
 app.use('/users', usersRouter);
-app.use('/game', gameRouter)
+app.use('/game', gameRouter);
+app.use('/chat', chatRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
