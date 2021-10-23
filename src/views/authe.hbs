@@ -10,30 +10,13 @@
 <body>
     <h1>Wheel of Jeopardy</h1>
     {{!-- User account login form --}}
-    <form id="account">
-    <label for="uname" id="login_label">u s e r n a m e :  </label>
-    <input type="text" id="uname" name="uname"><br><br>
-    <label for="email" id="login_label">e m a i l :  </label>
-    <input type="text" id="email" name="email"><br>
+    <form action="/api" method="POST">
+      <label for="uname" id="login_label">u s e r n a m e :  </label>
+      <input type="text" id="uname" name="uname"><br><br>
+      <label for="email" id="login_label">e m a i l :  </label>
+      <input type="text" id="email" name="email"><br>
+      {{!-- <button type="button" onclick="clickHandler()">e n t e r</button> --}}
+      <input type="submit" value="Enter" />
     </form>
-    <button type="button" onclick="clickHandler()">e n t e r</button>
-    
-    {{!-- Login button click handler --}}
-    <script>
-      function clickHandler() {
-        var userName = document.getElementById("uname").value;
-        var email = document.getElementById("email").value;
-        const data = { userName, email };
-        const options = {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(data)
-        };
-        fetch('/api', options)
-      }
-    </script>
-
 </body>
 </html>

@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
@@ -11,7 +12,7 @@ router.get(`/`, async(req, res) => {
 // get data from client
 router.post('/api', (req, res) => {
     //console.log(req.body);
-    var userName = req.body.userName;
+    var userName = req.body.uname;
     var email = req.body.email;
 
 
@@ -37,7 +38,7 @@ router.post('/api', (req, res) => {
 
     
 
-    //res.redirect('/')
+    res.redirect('/game')
 });
 
 module.exports = router;
