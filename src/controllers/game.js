@@ -12,11 +12,11 @@ const getQuestion = async() => {
 
     return {question, answer};
 }
-var i = 0;
+//var i = 0;
 /* GET game session. */
 router.get(`/`, async(req, res) => {
-    console.log(`Player ` + i + ` connected.`) // Counts connected players
-    ++i;
+    //console.log(`Player ` + i + ` connected.`) // Counts connected players
+    //++i;
     res.render('game', await getQuestion())
 });
 

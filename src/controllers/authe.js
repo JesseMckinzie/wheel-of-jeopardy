@@ -9,6 +9,8 @@ const db = require('../database/database')
 router.get(`/`, async(req, res) => {
     res.render('authe')
 });
+
+var i = 1;
 // get data from client
 router.post('/api', (req, res) => {
     //console.log(req.body);
@@ -30,6 +32,10 @@ router.post('/api', (req, res) => {
             if(result.email === email) {
                 //throw username already associated with another email error
                 console.log("Log in successful!")
+                console.log("Player " + i + " has connected.");
+                ++i;
+                
+                res.redirect('/game')
             } else {
                 console.log("Incorrect username or email.")
             } 
@@ -38,7 +44,7 @@ router.post('/api', (req, res) => {
 
     
 
-    res.redirect('/game')
+    
 });
 
 module.exports = router;
