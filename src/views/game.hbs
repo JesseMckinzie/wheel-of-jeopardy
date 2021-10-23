@@ -8,8 +8,7 @@
   </head>
   <body>
     <h1>Wheel of Jeopardy</h1>
-    {{!-- <form action="/game" id="game_form"></form> --}}
-    <form action="" id="game_form">
+    <form action="/game" id="game_form" name="the_game_form">
         <p>{{question}}</p>
         <input type="radio" id="answer_a" name="answer_choice" value="a">
         <label for="answer_a">a )  {{answer}}</label><br>
@@ -25,7 +24,7 @@
 
         <br>
         {{!-- <input id="buttonId" type="submit"> --}}
-        <button type="button" id="submit_button">e n t e r</button>
+        <button type="button" id="game_submit_button">e n t e r</button>
     </form>
 
     <form action="/logout">
@@ -50,17 +49,13 @@
 
       var form = document.getElementById('game_form');
 
-      document.getElementById("submit_button").addEventListener("click", function() {
+      document.getElementById("game_submit_button").addEventListener("click", function() {
         socket.emit('submit answer', ans);
       });
 
       socket.on('submit answer', function() {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", '/game', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify({
-            value: ""
-        }));
+        //alert("A player has answered");
+        form.submit();
       });
     </script>
   </body>
