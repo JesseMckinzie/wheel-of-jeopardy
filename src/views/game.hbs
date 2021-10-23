@@ -8,7 +8,8 @@
   </head>
   <body>
     <h1>Wheel of Jeopardy</h1>
-    <form action="/game">
+    {{!-- <form action="/game" id="game_form"></form> --}}
+    <form action="" id="game_form">
         <p>{{question}}</p>
         <input type="radio" id="answer_a" name="answer_choice" value="a">
         <label for="answer_a">a )  {{answer}}</label><br>
@@ -23,11 +24,44 @@
         <label for="answer_d">d )  {{answer}}</label><br>
 
         <br>
-        <input id="buttonId" type="submit">
+        {{!-- <input id="buttonId" type="submit"> --}}
+        <button type="button" id="submit_button">e n t e r</button>
     </form>
 
     <form action="/logout">
       <input id="buttonId" type="submit" value="Log Out">
     </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      var radios = document.querySelectorAll('input[name="answer_choice"]');
+      var ans;
+      for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+          // do whatever you want with the checked radio
+          var ans = i;
+          alert(ans);
+          // only one radio can be logically checked, don't check the rest
+          break;
+        }
+      }
+
+      var form = document.getElementById('game_form');
+
+      document.getElementById("submit_button").addEventListener("click", function() {
+        socket.emit('submit answer', ans);
+      });
+
+      socket.on('submit answer', function() {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", '/game', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify({
+            value: ""
+        }));
+      });
+    </script>
   </body>
 </html>

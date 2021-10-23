@@ -31,6 +31,11 @@ io.on('connection', (socket) => {
     io.emit('chat message', msg);
     console.log('message: ' + msg);
   });
+  socket.on('submit answer', (ans) => {
+    //io.emit('chat message', msg);
+    io.emit('submit answer', ans);
+    console.log('message: ' + ans);
+  });
 });
 
 /**
