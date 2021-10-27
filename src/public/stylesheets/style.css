@@ -1,0 +1,38 @@
+a {
+  color: #00B7FF;
+}
+
+@font-face {
+  font-family: 'Commando'; /*a name to be used later*/
+  src: url('../public/commando.ttf'); /*URL to font*/
+}
+body {
+  background-color: #fd84fd;
+  font: 14px "Times New Roman", "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+div {
+  margin-bottom: 10px;
+}
+#login_label {
+  display: inline-block;
+  width: 150px;
+  text-align: right;
+  font: "Times New Roman";
+}
+#submit_button {
+  margin-left: 150px;
+  margin-top: 20px;
+  font: "Times New Roman";
+}
+h1 {
+  margin-left: 150px;
+  color: #84ffc7;
+  font-family: 'Commando';
+}
+input[type="radio"] {
+  margin-top: -1px;
+  vertical-align: left;
+}
+#answer_d {
+  margin-left: 12px;
+}

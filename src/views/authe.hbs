@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="../public/stylesheets/style.css">
+</head>
+<body>
+    <h1>Wheel of Jeopardy</h1>
+    {{!-- User account login form --}}
+    <form action="/api" method="POST">
+      <label for="uname" id="login_label">u s e r n a m e :  </label>
+      <input type="text" id="uname" name="uname"><br><br>
+      <label for="email" id="login_label">e m a i l :  </label>
+      <input type="text" id="email" name="email"><br>
+      {{!-- <button type="button" onclick="clickHandler()">e n t e r</button> --}}
+      <input type="submit" value="e n t e r" id="submit_button"/>
+    </form>
+</body>
+</html>
