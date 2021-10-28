@@ -25,6 +25,26 @@ router.get(`/`, async(req, res) => {
     res.render('authe')
 });
 
+/* GET signup page. */
+router.get(`/register`, async(req, res) => {
+    res.render('register')
+});
+
+/* POST signup page. */
+router.post(`/reg_api`, (req, res) => {
+    var buttonPressed = req.body.button;
+    console.log(buttonPressed);
+    if (buttonPressed == "create") {
+        // Save user account
+        // res.render('authe')
+    } else if (buttonPressed == "back") {
+        // Go back
+        res.render('authe')
+    } else {
+        console.log("User did not press any buttons on the register page.");
+    }
+});
+
 // SIGN OUT ROUTE
 router.get("/logout", (req, res) => {
     res.clearCookie("jwt");
@@ -34,10 +54,9 @@ router.get("/logout", (req, res) => {
 var i = 1;
 // get data from client
 router.post('/api', (req, res) => {
-    //console.log(req.body);
-    var userName = req.body.uname;
+    // console.log(req.body);
+    var userName = req.body.username;
     var email = req.body.email;
-
 
     db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
         if(result.length == 0) {
