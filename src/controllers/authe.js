@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("url");
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
@@ -18,7 +19,6 @@ const createToken = (username, email) => {
         }
     );
 }
-
 
 /* GET home page. */
 router.get(`/`, async(req, res) => {
@@ -45,10 +45,55 @@ router.post(`/reg_api`, (req, res) => {
     }
 });
 
+/* GET lobby. */
+router.get(`/lobby`, async(req, res) => {
+    var userName = req.query.userName; // we need to pass username from login to lobby. Create code for sessions?
+    res.render('lobby', userName);
+});
+
+/* POST lobby. */
+router.post(`/lob_api`, (req, res) => {
+    var buttonPressed = req.body.button;
+    console.log(buttonPressed);
+    if (buttonPressed == "host") {
+        res.render('host')
+    } else if (buttonPressed == "join") {
+        // Go back
+        res.render('join')
+    } else if (buttonPressed == "logout") {
+        res.redirect('/logout')
+    } else {
+        console.log("User did not press any buttons on the register page.");
+    }
+});
+
+/* POST host. */
+router.post(`/host_api`, (req, res) => {
+    var buttonPressed = req.body.button;
+    console.log(buttonPressed);
+    if (buttonPressed == "create") {
+        // host game and direct to game
+        res.redirect('/game');
+    } else if (buttonPressed == "join") {
+        // join game and direct to game
+        res.redirect('/game');
+    } else if (buttonPressed == "back") {
+        // Go back
+        res.redirect('/lobby');
+    }  else {
+        console.log("User did not press any buttons on the register page.");
+    }
+});
+
 // SIGN OUT ROUTE
 router.get("/logout", (req, res) => {
     res.clearCookie("jwt");
     res.redirect("/");
+});
+
+// Back to lobby
+router.get(`/back`, (req, res) => {
+    res.redirect("/lobby");
 });
 
 var i = 1;
@@ -83,7 +128,7 @@ router.post('/api', (req, res) => {
                 const token = createToken(userName, email)
                 res.cookie("jwt", token);
                 
-                res.redirect('/game')
+                res.redirect('/lobby');
             } else {
                 console.log("Incorrect username or email.")
                 res.redirect('/')

@@ -4,32 +4,56 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Session</title>
-    <link rel="stylesheet" href="../public/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/game.css">
   </head>
   <body>
-    <h1>Wheel of Jeopardy</h1>
-    <form action="/game" id="game_form" name="the_game_form">
-        <p>{{question}}</p>
-        <input type="radio" id="answer_a" name="answer_choice" value="a">
-        <label for="answer_a">a )  {{answer}}</label><br>
+    <div class="container">
+      <div class="other-players">
+        <p> timer </p><br>
+        <p> player 1</p><br>
+        <p> player 2</p><br>
+      </div>
 
-        <input type="radio" id="answer_b" name="answer_choice" value="b">
-        <label for="answer_b">b )  {{answer}}</label><br>
+      <div class="chat-container">
+        <form class="chat-form" action="">
+          <div class="form-group">
+            <input id="chat-input" autocomplete="off" placeholder=""/><button id="chat-send"> s e n d </button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="user-profile">
+        <p> user profile</p>
+        <form action="/back">
+          <button class="full-btn" name="button" value="back"> b a c k</button>
+        </form>
 
-        <input type="radio" id="answer_c" name="answer_choice" value="c">
-        <label for="answer_c">c )  {{answer}}</label><br>
+        <form action="/logout">
+          <input id="buttonId" type="submit" value="Log Out">
+        </form>
+      </div>
 
-        <input type="radio" id="answer_d" name="answer_choice" value="d">
-        <label for="answer_d">d )  {{answer}}</label><br>
+      <div class="game-area">
+        <form action="/game" id="game_form" name="the_game_form">
+          <p>{{question}}</p>
+          <input type="radio" id="answer_a" name="answer_choice" value="a">
+          <label for="answer_a">a )  {{answer}}</label><br>
 
-        <br>
-        {{!-- <input id="buttonId" type="submit"> --}}
-        <button type="button" id="game_submit_button">e n t e r</button>
-    </form>
+          <input type="radio" id="answer_b" name="answer_choice" value="b">
+          <label for="answer_b">b )  {{answer}}</label><br>
 
-    <form action="/logout">
-      <input id="buttonId" type="submit" value="Log Out">
-    </form>
+          <input type="radio" id="answer_c" name="answer_choice" value="c">
+          <label for="answer_c">c )  {{answer}}</label><br>
+
+          <input type="radio" id="answer_d" name="answer_choice" value="d">
+          <label for="answer_d">d )  {{answer}}</label><br>
+
+          <br>
+          {{!-- <input id="buttonId" type="submit"> --}}
+          <button type="button" id="game_submit_button">e n t e r</button>
+        </form>
+      </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
