@@ -150,12 +150,13 @@ router.post('/api', (req, res) => {
     db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
         if(result.length == 0) {
             console.log("User does not exist") // Need to add alert for this
+            redirect = '/';
         } else {
 
             result = JSON.stringify(result);
             result = JSON.parse(result)[0];
 
-            if(result.email === email) {
+            if(email !== "" && userName !== "" && result.email === email) {
                 console.log("Log in successful!")
                 console.log(`Player ${i} (${userName}) has connected.`);
                 ++i;
@@ -164,13 +165,15 @@ router.post('/api', (req, res) => {
                 res.cookie("jwt", token);
                 
                 res.redirect('/lobby');
+                redirect = '/lobby';
             } else {
                 console.log("Incorrect username or email.")
                 res.redirect('/')
+                redirect = '/'
             } 
         }
     });
-    
+   // res.redirect(redirect);
 });
 
 module.exports = router;
