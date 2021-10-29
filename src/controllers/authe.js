@@ -35,8 +35,41 @@ router.post(`/reg_api`, (req, res) => {
     var buttonPressed = req.body.button;
     console.log(buttonPressed);
     if (buttonPressed == "create") {
-        // Save user account
-        // res.render('authe')
+
+        var userName = req.body.username;
+        var email = req.body.email;
+
+        db.query(`SELECT username FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
+            
+            // Check if username is already in use
+            if(result.length != 0) {
+
+                console.log('Username already in use.')
+                res.render('register'); // route back to registration page, need to add alert
+
+            } else {
+
+                //Check if email is already in use
+                db.query(`SELECT email FROM users WHERE email = "` + email + `"`, (err, result, field) => {
+                    if(result.length != 0) {
+
+                        console.log('Email already in use.')
+                        res.render('register'); // route back to registration page, need to add alert
+
+                    } else { // If username and email have not been used, create a new account
+
+                        var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
+    
+                        db.query(command, (err, result) => {
+                            if (err) throw err;
+                            console.log('User has been added to database.');
+                        });
+                        res.render('authe') // Route to login page
+                    }
+                });
+            }
+        });
+
     } else if (buttonPressed == "back") {
         // Go back
         res.render('authe')
@@ -105,26 +138,19 @@ router.post('/api', (req, res) => {
 
     db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
         if(result.length == 0) {
-            var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
 
-            db.query(command, (err, result) => {
-                if (err) throw err;
-                console.log('User has been added to database.');
+            console.log("User does not exist") // Need to add alert for this
 
-                const token = createToken(userName, email)
-                res.cookie("jwt", token);
-
-                res.redirect('/game')
-            });
         } else {
+
             result = JSON.stringify(result);
             result = JSON.parse(result)[0];
+
             if(result.email === email) {
-                //throw username already associated with another email error
                 console.log("Log in successful!")
                 console.log(`Player ${i} (${userName}) has connected.`);
                 ++i;
-
+                
                 const token = createToken(userName, email)
                 res.cookie("jwt", token);
                 
@@ -135,9 +161,6 @@ router.post('/api', (req, res) => {
             } 
         }
     });
-
-    
-
     
 });
 
