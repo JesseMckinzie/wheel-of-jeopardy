@@ -29,12 +29,16 @@ io.on('connection', (socket) => {
   });
   socket.on('chat message', (msg) => {
     io.emit('chat message', msg);
-    console.log('message: ' + msg);
+    //console.log('message: ' + msg);
+  });
+  socket.on('game chat message', (msg) => {
+    //console.log('message: ' + msg);
+    io.emit('game chat message', msg);
   });
   socket.on('submit answer', (ans) => {
     //io.emit('chat message', msg);
     io.emit('submit answer', ans);
-    console.log('message: ' + ans);
+    //console.log('message: ' + ans);
   });
 });
 

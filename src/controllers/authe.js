@@ -33,7 +33,7 @@ router.get(`/register`, async(req, res) => {
 /* POST signup page. */
 router.post(`/reg_api`, (req, res) => {
     var buttonPressed = req.body.button;
-    console.log(buttonPressed);
+    // console.log(buttonPressed);
     if (buttonPressed == "create") {
 
         var userName = req.body.username;
@@ -71,23 +71,24 @@ router.post(`/reg_api`, (req, res) => {
         });
 
     } else if (buttonPressed == "back") {
-        // Go back
-        res.render('authe')
+        // Go back to login
+        res.clearCookie("jwt");
+        res.redirect("/");
     } else {
         console.log("User did not press any buttons on the register page.");
     }
 });
 
-/* GET lobby. */
+/* GET lobby page. */
 router.get(`/lobby`, async(req, res) => {
     var userName = req.query.userName; // we need to pass username from login to lobby. Create code for sessions?
     res.render('lobby', userName);
 });
 
-/* POST lobby. */
+/* POST lobby page. */
 router.post(`/lob_api`, (req, res) => {
     var buttonPressed = req.body.button;
-    console.log(buttonPressed);
+    // console.log(buttonPressed);
     if (buttonPressed == "host") {
         res.render('host')
     } else if (buttonPressed == "join") {
@@ -100,10 +101,10 @@ router.post(`/lob_api`, (req, res) => {
     }
 });
 
-/* POST host. */
+/* POST host page. */
 router.post(`/host_api`, (req, res) => {
     var buttonPressed = req.body.button;
-    console.log(buttonPressed);
+    //console.log(buttonPressed);
     if (buttonPressed == "create") {
         // host game and direct to game
         res.redirect('/game');
@@ -124,11 +125,6 @@ router.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-// Back to lobby
-router.get(`/back`, (req, res) => {
-    res.redirect("/lobby");
-});
-
 var i = 1;
 // get data from client
 router.post('/api', (req, res) => {
@@ -138,9 +134,7 @@ router.post('/api', (req, res) => {
 
     db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
         if(result.length == 0) {
-
             console.log("User does not exist") // Need to add alert for this
-
         } else {
 
             result = JSON.stringify(result);

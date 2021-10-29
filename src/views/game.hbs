@@ -9,13 +9,17 @@
   <body>
     <div class="container">
       <div class="other-players">
-        <p> timer </p><br>
-        <p> player 1</p><br>
-        <p> player 2</p><br>
+        <p> timer <br>
+            player 1<br>
+            player 2
+        </p>
       </div>
 
       <div class="chat-container">
-        <form class="chat-form" action="">
+        <div class="message-container">
+          <ul id="messages"></ul>
+        </div>
+        <form id="chat-form" class="chat-form" action="">
           <div class="form-group">
             <input id="chat-input" autocomplete="off" placeholder=""/><button id="chat-send"> s e n d </button>
           </div>
@@ -24,7 +28,7 @@
       
       <div class="user-profile">
         <p> user profile</p>
-        <form action="/back">
+        <form action="/lobby">
           <button class="full-btn" name="button" value="back"> b a c k</button>
         </form>
 
@@ -34,7 +38,7 @@
       </div>
 
       <div class="game-area">
-        <form action="/game" id="game_form" name="the_game_form">
+        <form action="/game_api" id="game_form" name="the_game_form" method="POST">
           <p>{{question}}</p>
           <input type="radio" id="answer_a" name="answer_choice" value="a">
           <label for="answer_a">a )  {{answer}}</label><br>
@@ -49,7 +53,6 @@
           <label for="answer_d">d )  {{answer}}</label><br>
 
           <br>
-          {{!-- <input id="buttonId" type="submit"> --}}
           <button type="button" id="game_submit_button">e n t e r</button>
         </form>
       </div>
@@ -81,6 +84,28 @@
         //alert("A player has answered");
         form.submit();
       });
-    </script>
+
+      // Chat
+      var messages = document.getElementById('messages');
+      var form = document.getElementById('chat-form');
+      var input = document.getElementById('chat-input');
+
+      socket.emit('game chat message', `{{user}} is in the chat`)
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('game chat message', input.value);
+          input.value = '';
+        }
+      });
+
+      socket.on('game chat message', function(msg) {
+        var item = document.createElement('li');
+        item.textContent = msg;
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>    
   </body>
 </html>
