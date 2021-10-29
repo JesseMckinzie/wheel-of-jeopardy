@@ -17,14 +17,7 @@ const getQuestion = async() => {
 router.get(`/`, async(req, res) => {
     //console.log(`Player ` + i + ` connected.`) // Counts connected players
     //++i;
-    console.log(req);
     res.render('game', await getQuestion())
-});
-
-/* POST game session. */
-router.post(`/game_api`, (req, res) => {
-    console.log(req);
-    res.redirect('/');
 });
 
 module.exports = router;
