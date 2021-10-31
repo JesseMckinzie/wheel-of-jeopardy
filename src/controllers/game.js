@@ -12,12 +12,24 @@ const getQuestion = async() => {
 
     return {question, answer};
 }
-//var i = 0;
+
+var questions;
+const getQuestions = async() => {
+    let response = await axios('https://opentdb.com/api.php?amount=10&encode=url3986');
+    questions = response.data;
+
+    return questions;
+}
+
+const getSingleQuestion = (index) => questions[index];
+
 /* GET game session. */
 router.get(`/`, async(req, res) => {
-    //console.log(`Player ` + i + ` connected.`) // Counts connected players
-    //++i;
     res.render('game', await getQuestion())
 });
+
+const playerAnswersQuestion = () => {
+    
+}
 
 module.exports = router;
