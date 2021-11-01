@@ -6,11 +6,21 @@ const axios = require('axios')
 
 const getQuestion = async() => {
     let response = await axios(`https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986`)
+    let response = await axios(`https://opentdb.com/api.php?amount=1&category=9&difficulty=easy&type=multiple&encode=url3986`)
     response = response.data.results[0];
     question = unescape(response.question);
-    answer = unescape(response.correct_answer);
+    correctAnswer = unescape(response.correct_answer);
+    answers = response.incorrect_answers;
+    answers.push(correctAnswer);
 
-    return {question, answer};
+    shuffleArray(answers);
+
+    const answerA = unescape(answers[0]);
+    const answerB = unescape(answers[1]);
+    const answerC = unescape(answers[2]);
+    const answerD = unescape(answers[3]);
+
+    return {question, answerA, answerB, answerC, answerD, correctAnswer};
 }
 //var i = 0;
 /* GET game session. */
