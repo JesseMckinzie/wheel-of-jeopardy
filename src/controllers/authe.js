@@ -35,31 +35,22 @@ router.post(`/reg_api`, (req, res) => {
     var buttonPressed = req.body.button;
     // console.log(buttonPressed);
     if (buttonPressed == "create") {
-
         var userName = req.body.username;
         var email = req.body.email;
-
         db.query(`SELECT username FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
             
             // Check if username is already in use
             if(result.length != 0) {
-
                 console.log('Username already in use.')
                 res.render('register'); // route back to registration page, need to add alert
-
             } else {
-
                 //Check if email is already in use
                 db.query(`SELECT email FROM users WHERE email = "` + email + `"`, (err, result, field) => {
                     if(result.length != 0) {
-
                         console.log('Email already in use.')
                         res.render('register'); // route back to registration page, need to add alert
-
                     } else { // If username and email have not been used, create a new account
-
                         var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
-    
                         db.query(command, (err, result) => {
                             if (err) throw err;
                             console.log('User has been added to database.');
