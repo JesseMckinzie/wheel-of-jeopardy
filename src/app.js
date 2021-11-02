@@ -25,7 +25,7 @@ const verifyToken = (req, res, next) => {
     }
     req.user = decodedUser;
     // ADDS A .user PROP TO REQ FOR TOKEN USER
-    console.log(decodedUser);
+    //console.log(decodedUser);
 
     next();
   });
