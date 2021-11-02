@@ -9,10 +9,31 @@
   <body>
     <div class="container">
       <div class="other-players">
-        <p> timer <br>
-            player 1<br>
-            player 2
-        </p>
+        <p> timer</p>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : <br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>           
+        </div>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : <br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>           
+        </div>
       </div>
 
       <div class="chat-container">
@@ -37,21 +58,37 @@
             a c t i o n : <br>
           </p>
         </div>
-        <form action="/player_actions" class="current-player-actions" method="POST">
-          <div class="player-action-form-group">
-            <button class="full-btn" name="button" value=""> a</button> 
-            <button class="full-btn" name="button" value=""> b</button> 
-            <button class="full-btn" name="button" value=""> c</button> 
-            <button class="full-btn" name="button" value=""> d</button> <br> <br>
-            <button class="full-btn" name="button" value=""> s p i n</button> <br> <br>
-            <button class="full-btn" name="button" value=""> b u z z  i n</button> <br> <br>
-            <button class="full-btn" name="button" value="back"> b a c k</button> <br> <br>
-            <button class="full-btn" name="button" value="logout"> l o g  o u t</button>
-          </div>
-        </form>
+        <div class="answer-btns-container">
+          <form action="/player_actions" class="current-player-ans" method="POST">
+            <button class="ans-btn" name="button" value=""> a</button> 
+            <button class="ans-btn" name="button" value=""> b</button> 
+            <button class="ans-btn" name="button" value=""> c</button> 
+            <button class="ans-btn" name="button" value=""> d</button> 
+          </form>
+        </div>
+        <div class="player-btns-container">
+          <form action="/player_actions" class="current-player-actions" method="POST">
+            <button class="action-btn" name="button" value=""> s p i n</button> <br> <br>
+            <button class="action-btn" name="button" value=""> b u z z  i n</button> <br> <br>
+            <button class="action-btn" name="button" value="back"> b a c k</button> <br> <br>
+            <button class="action-btn" name="button" value="logout"> l o g  o u t</button>
+          </form>
+        </div>         
       </div>
 
       <div class="game-area">
+        <ul>
+          <li>Question Category 1</li>
+          <li>Question Category 2</li>
+          <li>Question Category 3</li>
+          <li>Question Category 4</li>
+          <li>Question Category 5</li>
+          <li>Question Category 6</li>
+        </ul>
+        <p> The wheel landed on this question category: placeholder{{questionCategory}}</p>
+        <form action="" class="choose-q-val">
+          <input id="q-val-input" autocomplete="off" placeholder="Choose a point value here"/><button id="choose-q-val-btn"> c h o o s e </button>
+        </form>
         <form action="/game" id="game_form" name="the_game_form" method="POST">
           <p>{{question}}</p>
           <label for="answer_a">a )  {{answerA}}</label><br>
