@@ -1,11 +1,10 @@
 require("dotenv").config();
-require("url");
 const express = require('express');
 const router = express.Router();
 const axios = require('axios')
 const db = require('../database/database')
 const jwt = require("jsonwebtoken");
-
+const url = require('url');
 
 const createToken = (username, email) => {
     return jwt.sign(
@@ -85,12 +84,16 @@ router.get(`/lobby`, async(req, res) => {
     res.render('lobby', userName);
 });
 
+let gameIds = [0] // list to hold all game IDs
+
 /* POST lobby page. */
 router.post(`/lob_api`, (req, res) => {
     var buttonPressed = req.body.button;
     // console.log(buttonPressed);
     if (buttonPressed == "host") {
-        res.render('host')
+        var thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
+        gameIds.push(thisGameId);
+        res.render('host', {thisGameId});
     } else if (buttonPressed == "join") {
         // Go back
         res.render('join')
@@ -104,13 +107,34 @@ router.post(`/lob_api`, (req, res) => {
 /* POST host page. */
 router.post(`/host_api`, (req, res) => {
     var buttonPressed = req.body.button;
+    var gameId = gameIds[gameIds.length - 1];
+    var passcode = req.body.passcode;
+    var gameLength = req.body.game_length;    
     //console.log(buttonPressed);
     if (buttonPressed == "create") {
         // host game and direct to game
-        res.redirect('/game');
+        res.redirect(url.format({
+            pathname:"/game",
+            query: {
+               "gameId": gameId,
+               "passcode": passcode,
+               "gameLength": gameLength,
+               "type": "host"
+             }
+        }));
+        // need a game creation method here
+        //res.redirect('/game');
     } else if (buttonPressed == "join") {
         // join game and direct to game
-        res.redirect('/game');
+        gameId = req.body.gameId;
+        res.redirect(url.format({
+            pathname:"/game",
+            query: {
+               "gameId": gameId,
+               "passcode": passcode,
+               "type": "join"
+             }
+        })); 
     } else if (buttonPressed == "back") {
         // Go back
         res.redirect('/lobby');
@@ -130,7 +154,7 @@ router.post(`/player_actions`, (req, res) => {
         // Go back
         res.redirect('/lobby');
     }  else {
-        console.log("User did not press any buttons on the register page.");
+        console.log("User did not press any buttons on the game page.");
     }
 });
 

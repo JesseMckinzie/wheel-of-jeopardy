@@ -31,15 +31,22 @@ io.on('connection', (socket) => {
     io.emit('chat message', msg);
     //console.log('message: ' + msg);
   });
-  socket.on('game chat message', (msg) => {
+  socket.on('game chat message', (data) => {
     //console.log('message: ' + msg);
-    io.emit('game chat message', msg);
+    io.emit('game chat message', data);
   });
   socket.on('submit answer', (ans) => {
     //io.emit('chat message', msg);
     io.emit('submit answer', ans);
     //console.log('message: ' + ans);
   });
+  socket.on('user joined', (user) => {
+    console.log(user);
+    io.emit('user joined', user);
+  });
+  socket.on('spin', () => {
+    console.log("Someone spun a wheel");
+  });    
 });
 
 /**
