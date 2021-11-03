@@ -160,6 +160,7 @@ jQuery(function($){
             if (App.currentPlayer) {
                 IO.socket.emit('spin');
             }
+            App.questionDisplayed = false;
         },
 
         /**
@@ -207,16 +208,24 @@ jQuery(function($){
         },
 
         onChooseA: function() {
-            IO.socket.emit('submit-answer', {choice: $('#answer_a').text(), username: App.myUsername});
+            if (App.currentPlayer && App.questionDisplayed) {
+                IO.socket.emit('submit-answer', {choice: $('#answer_a').text(), username: App.myUsername});
+            };
         },
         onChooseB: function() {
-            IO.socket.emit('submit-answer', {choice: $('#answer_b').text(), username: App.myUsername});
+            if (App.currentPlayer && App.questionDisplayed) {
+                IO.socket.emit('submit-answer', {choice: $('#answer_b').text(), username: App.myUsername});
+            };
         },
         onChooseC: function() {
-            IO.socket.emit('submit-answer', {choice: $('#answer_c').text(), username: App.myUsername});
+            if (App.currentPlayer && App.questionDisplayed) {
+                IO.socket.emit('submit-answer', {choice: $('#answer_c').text(), username: App.myUsername});
+            };
         },
         onChooseD: function() {
-            IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
+            if (App.currentPlayer && App.questionDisplayed) {
+                IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
+            };
         },                
     };
 
