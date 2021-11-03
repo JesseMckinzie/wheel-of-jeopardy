@@ -15,7 +15,7 @@
       </div>
       <form class="login" action="/host_api" method="POST">
         <div class="form-group">
-          <p> l o g g e d  i n  a s {{username}}</p>
+          <p white-space="pre"> l o g g e d  i n  a s  {{username}}</p>
         </div>
         <div class="form-group">
           <input type="text" name="game_id" placeholder="g a m e  i d" id="game_id" class="form-control">
@@ -24,7 +24,7 @@
           <input type="text" name="passcode" placeholder="p a s s c o d e" id="passcode" class="form-control">
         </div>
         <div class="form-group">
-          <button class="full-btn" name="button" value="join"> j o i n  g a m e</button>
+          <button class="full-btn" name="button" value="join" id="join-btn"> j o i n  g a m e</button>
         </div>
         <div class="form-group">
           <button class="full-btn" name="button" value="back"> b a c k</button>
@@ -35,5 +35,14 @@
       </div>
     </div>
   </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    document.getElementById("join-btn").addEventListener("click", function() {
+      socket.emit('playerJoinGame', {game_id: document.getElementById('game_id').value, passcode: document.getElementById('passcode').value, username: '{{username}}'});
+    });
+  </script>  
 </body>
 </html>

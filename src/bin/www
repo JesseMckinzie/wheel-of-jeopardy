@@ -8,6 +8,8 @@ var app = require('../app');
 var debug = require('debug')('src:server');
 var http = require('http');
 const { Server } = require("socket.io");
+// Import the Wheel of Jeopardy game file.
+var woj = require('../wojgame');
 
 /**
  * Get port from environment and store in Express.
@@ -21,32 +23,12 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
-const io = new Server(server);
+
+/* Create socket and initialize the game */
+var io = new Server(server);
 io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
-    //console.log('message: ' + msg);
-  });
-  socket.on('game chat message', (data) => {
-    //console.log('message: ' + msg);
-    io.emit('game chat message', data);
-  });
-  socket.on('submit answer', (ans) => {
-    //io.emit('chat message', msg);
-    io.emit('submit answer', ans);
-    //console.log('message: ' + ans);
-  });
-  socket.on('user joined', (user) => {
-    console.log(user);
-    io.emit('user joined', user);
-  });
-  socket.on('spin', () => {
-    console.log("Someone spun a wheel");
-  });    
+  console.log('a client connected');
+  woj.initGame(io, socket);
 });
 
 /**

@@ -15,7 +15,7 @@
       </div>
       <form class="login" action="/host_api" method="POST">
         <div class="form-group">
-          <p> l o g g e d  i n  a s {{username}}</p>
+          <p white-space="pre"> l o g g e d  i n  a s  {{username}}</p>
         </div>
         <div class="form-group">
           <input type="text" name="game_id" placeholder={{thisGameId}} id="game_id" class="form-control" readonly>
@@ -27,7 +27,7 @@
           <input type="text" name="game_length" placeholder="s e t  g a m e  l e n g t h" id="game_length" class="form-control">
         </div>
         <div class="form-group">
-          <button class="full-btn" name="button" value="create"> c r e a t e  g a m e</button>
+          <button class="full-btn" name="button" value="create" id="create-btn"> c r e a t e  g a m e</button>
         </div>
         <div class="form-group">
           <button class="full-btn" name="button" value="back"> b a c k</button>
@@ -38,5 +38,15 @@
       </div>
     </div>
   </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    var socket = io();
+
+    document.getElementById("create-btn").addEventListener("click", function() {
+      socket.emit('hostCreateNewGame', {game_id: document.getElementById('game_id').placeholder, 
+      passcode: document.getElementById('passcode').value, game_length: document.getElementById('game_length').value, username: '{{username}}'});
+    });
+  </script>
 </body>
 </html>
