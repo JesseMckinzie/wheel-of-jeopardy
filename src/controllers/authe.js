@@ -4,7 +4,6 @@ const router = express.Router();
 const axios = require('axios')
 const db = require('../database/database')
 const jwt = require("jsonwebtoken");
-const url = require('url');
 
 const createToken = (username, email) => {
     return jwt.sign(
@@ -83,90 +82,6 @@ router.post(`/reg_api`, (req, res) => {
         res.clearCookie("jwt");
         res.redirect("/");
     } else {
-        console.log("User did not press any buttons on the register page.");
-    }
-});
-
-gameIds = [0] // list to hold all game IDs
-
-/* POST lobby page. */
-router.post(`/lob_api`, (req, res) => {
-    var buttonPressed = req.body.button;
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });
-    if (buttonPressed == "host") {
-        var thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
-        gameIds.push(thisGameId);
-        res.render('host', {thisGameId, username});
-    } else if (buttonPressed == "join") {
-        // Go back
-        res.render('join', {username})
-    } else if (buttonPressed == "logout") {
-        res.redirect('/logout')
-    } else {
-        console.log("User did not press any buttons on the register page.");
-    }
-});
-
-/* POST host page. */
-router.post(`/host_api`, (req, res) => {
-    var buttonPressed = req.body.button;
-    var gameId = gameIds[gameIds.length - 1];
-    var passcode = req.body.passcode;
-    var gameLength = req.body.game_length;
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });       
-    if (buttonPressed == "create") {
-        // host game and direct to game
-        /* res.redirect(url.format({
-            pathname:"/game",
-            query: {
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength,
-               "type": "host"
-             }
-        })); */
-        res.redirect(url.format({
-            pathname:"/wait",
-            query: {
-               "username": username,
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength
-             }
-        }));
-        // need a game creation method here
-    } else if (buttonPressed == "join") {
-        // join game and direct to game
-        gameId = req.body.gameId;
-        /* res.redirect(url.format({
-            pathname:"/game",
-            query: {
-               "gameId": gameId,
-               "passcode": passcode,
-               "type": "join"
-             }
-        })); */
-        res.redirect(url.format({
-            pathname:"/wait",
-            query: {
-               "username": username,
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength
-             }
-        }));
-    } else if (buttonPressed == "back") {
-        // Go back
-        res.redirect('/lobby');
-    }  else {
         console.log("User did not press any buttons on the register page.");
     }
 });
