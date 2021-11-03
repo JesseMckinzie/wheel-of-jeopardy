@@ -21,7 +21,7 @@
     
     </div>    
 
-    <div id="gameArea">
+    <div class="game-area" id="game-area">
           <!-- This is where the templates defined below will be used -->
     </div>    
   </div>
@@ -79,9 +79,11 @@
       </form>
     </div>
     <div class="player-btns-container">
+      <form action="" class="current-player-actions">
+        <button class="action-btn" type="button" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
+        <button class="action-btn" type="button" name="button" value=""> b u z z  i n</button> <br> <br>
+      </form>      
       <form action="/player_actions" class="current-player-actions" method="POST">
-        <button class="action-btn" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
-        <button class="action-btn" name="button" value=""> b u z z  i n</button> <br> <br>
         <button class="action-btn" name="button" value="back"> b a c k</button> <br> <br>
         <button class="action-btn" name="button" value="logout"> l o g  o u t</button>
       </form>
@@ -97,6 +99,25 @@
         <input id="chat-input" autocomplete="off" placeholder=""/><button type="button" id="chat-send"> s e n d </button>
       </div>
     </form>
+  </script>
+
+  <script id="wheel-template" type="text/template">
+    <div class="wheel-container">
+      <p id="question-cat"> </p>
+      <form action="" class="choose-q-val">
+        <input id="q-val-input" autocomplete="off" placeholder="Choose a point value here"/><button type="button" id="choose-q-val-btn"> c h o o s e </button>
+      </form>      
+    </div>
+  </script>  
+
+  <script id="question-template" type="text/template">
+    <div class="question-container">
+      <p id="question"></p>
+      <label id="answer_a" for="answer_a">a )  {{answerA}}</label><br>
+      <label id="answer_b" for="answer_b">b )  {{answerB}}</label><br>
+      <label id="answer_c" for="answer_c">c )  {{answerC}}</label><br>
+      <label id="answer_d" for="answer_d">d )  {{answerD}}</label><br>
+    </div>  
   </script>
 
   <!-- jQuery! -->

@@ -43,7 +43,13 @@ jQuery(function($){
             });
             IO.socket.on('chat-message-bounce', (data) => {
                 App.updateChatBox(data);
-            });              
+            });
+            IO.socket.on('getQuestionCategory', (data) => {
+                App.getQuestionCategory(data);
+            });
+            IO.socket.on('sendQuestion', (data) => {
+                App.getQuestion(data);
+            });                          
         }
     };
 
@@ -66,6 +72,8 @@ jQuery(function($){
             $('#chat-container').html(App.$templateChat);
             
             App.$doc.on('click', '#chat-send', App.onChatSend);
+            App.$doc.on('click', '#spin-button', App.onSpinBtn);
+            App.$doc.on('click', '#choose-q-val-btn', App.onChooseQuestionVal);
         },
 
         updatePlayerScreen: function(data) {
@@ -89,6 +97,32 @@ jQuery(function($){
         updateChatBox: function(data) {
             var msg = data.username.concat(': ', data.msg);
             $("#messages").append('<li>'.concat(msg, '</li>'));
+        },
+
+        onSpinBtn: function() {
+            IO.socket.emit('spin');
+        },
+
+        getQuestionCategory: function(data) {
+            $('#game-area').html($('#wheel-template').html());
+            $('#question-cat').append('<p/>').text(data);
+        },
+
+        onChooseQuestionVal: function() {
+            var qVal = $('#q-val-input').val();
+            if (qVal) {
+                IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
+                $('#q-val-input').val() = '';
+            }            
+        },
+
+        getQuestion: function(data) {
+            $('#game-area').html($('#question-template').html());
+            $('#question').append('<p/>').text(data.question);
+            $('#answer_a').text('a)'.concat(' ', data.answerA));
+            $('#answer_b').text('b)'.concat(' ', data.answerB));
+            $('#answer_c').text('c)'.concat(' ', data.answerC));
+            $('#answer_d').text('d)'.concat(' ', data.answerD));
         }
     };
 
