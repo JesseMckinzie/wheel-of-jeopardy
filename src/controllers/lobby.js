@@ -8,22 +8,16 @@ let gameIds = [0] // list to hold all game IDs
 
 /* GET lobby page. */
 router.get(`/`, (req, res) => {
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });
+    const username = req.user.username;
+
     res.render('lobby', {username});
 });
 
 /* POST lobby page. */
 router.post(`/`, (req, res) => {
     var buttonPressed = req.body.button;
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });
+    const username = req.user.username;
+
     if (buttonPressed == "host") {
         var thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
         gameIds.push(thisGameId);
@@ -44,11 +38,8 @@ router.post(`/host_api`, (req, res) => {
     var gameId = gameIds[gameIds.length - 1];
     var passcode = req.body.passcode;
     var gameLength = req.body.game_length;
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });       
+    const username = req.user.username;
+     
     if (buttonPressed == "create") {
         // host game and direct to game
         /* res.redirect(url.format({
