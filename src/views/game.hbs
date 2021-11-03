@@ -106,53 +106,10 @@
     <script>
       var socket = io();
 
-      // On connection, transmit to server that this user is in the room
-      window.onload = function(e){ 
-        socket.emit('user joined', '{{user}}');
-      }
-      
-      socket.on('user joined', function(user) {
-        if (user != '{{user}}') {
-          document.getElementById("player-1-info").innerHTML = "n a m e :".concat(' ', user).concat('', '<br> s c o r e :  <br> a c t i o n  :');
+      socket.on('playerJoinGame', function(data) {
+        if (data.username != '{{user}}') {
+          document.getElementById("player-1-info").innerHTML = "n a m e :".concat(' ', data.username).concat('', '<br> s c o r e :  <br> a c t i o n  :');
         }
-      });
-
-      var form = document.getElementById('game_form');
-      var ans;
-
-      document.getElementById("game_submit_button").addEventListener("click", function() {
-        socket.emit('submit answer', ans);
-      });
-
-      socket.on('submit answer', function() {
-        //alert("A player has answered");
-        form.submit();
-      });
-
-      // Chat
-      var messages = document.getElementById('messages');
-      var form = document.getElementById('chat-form');
-      var input = document.getElementById('chat-input');
-
-      socket.emit('game chat message', {msg: ` is in the chat`, user: '{{user}}'})
-
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        if (input.value) {
-          socket.emit('game chat message', {msg: input.value, user: '{{user}}'});
-          input.value = '';
-        }
-      });
-
-      socket.on('game chat message', function(data) {
-        var item = document.createElement('li');
-        item.textContent = data.user.concat(': ', data.msg);
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-      });
-
-      document.getElementById("spin-button").addEventListener("click", function() {
-        socket.emit('spin');
       });      
     </script>    
   </body>

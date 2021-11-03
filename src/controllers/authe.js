@@ -29,6 +29,15 @@ router.get(`/register`, async(req, res) => {
     res.render('register')
 });
 
+router.get('/wait', async(req, res) => {
+    username = req.query.username;
+    gameId = req.query.gameId;
+    passcode = req.query.passcode;
+    gameLength = req.query.gameLength;
+    console.log(username);
+    res.render('wait', {username, gameId, passcode, gameLength})
+});
+
 /* POST signup page. */
 router.post(`/reg_api`, (req, res) => {
     var buttonPressed = req.body.button;
@@ -79,24 +88,32 @@ router.post(`/reg_api`, (req, res) => {
 });
 
 /* GET lobby page. */
-router.get(`/lobby`, async(req, res) => {
-    var userName = req.query.userName; // we need to pass username from login to lobby. Create code for sessions?
-    res.render('lobby', userName);
+router.get(`/lobby`, (req, res) => {
+    let token = req.cookies.jwt;
+    var username;
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+        username = decodedUser.username;
+    });
+    res.render('lobby', {username});
 });
 
-let gameIds = [0] // list to hold all game IDs
+gameIds = [0] // list to hold all game IDs
 
 /* POST lobby page. */
 router.post(`/lob_api`, (req, res) => {
     var buttonPressed = req.body.button;
-    // console.log(buttonPressed);
+    let token = req.cookies.jwt;
+    var username;
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+        username = decodedUser.username;
+    });
     if (buttonPressed == "host") {
         var thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
         gameIds.push(thisGameId);
-        res.render('host', {thisGameId});
+        res.render('host', {thisGameId, username});
     } else if (buttonPressed == "join") {
         // Go back
-        res.render('join')
+        res.render('join', {username})
     } else if (buttonPressed == "logout") {
         res.redirect('/logout')
     } else {
@@ -109,11 +126,15 @@ router.post(`/host_api`, (req, res) => {
     var buttonPressed = req.body.button;
     var gameId = gameIds[gameIds.length - 1];
     var passcode = req.body.passcode;
-    var gameLength = req.body.game_length;    
-    //console.log(buttonPressed);
+    var gameLength = req.body.game_length;
+    let token = req.cookies.jwt;
+    var username;
+    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
+        username = decodedUser.username;
+    });       
     if (buttonPressed == "create") {
         // host game and direct to game
-        res.redirect(url.format({
+        /* res.redirect(url.format({
             pathname:"/game",
             query: {
                "gameId": gameId,
@@ -121,20 +142,37 @@ router.post(`/host_api`, (req, res) => {
                "gameLength": gameLength,
                "type": "host"
              }
+        })); */
+        res.redirect(url.format({
+            pathname:"/wait",
+            query: {
+               "username": username,
+               "gameId": gameId,
+               "passcode": passcode,
+               "gameLength": gameLength
+             }
         }));
         // need a game creation method here
-        //res.redirect('/game');
     } else if (buttonPressed == "join") {
         // join game and direct to game
         gameId = req.body.gameId;
-        res.redirect(url.format({
+        /* res.redirect(url.format({
             pathname:"/game",
             query: {
                "gameId": gameId,
                "passcode": passcode,
                "type": "join"
              }
-        })); 
+        })); */
+        res.redirect(url.format({
+            pathname:"/wait",
+            query: {
+               "username": username,
+               "gameId": gameId,
+               "passcode": passcode,
+               "gameLength": gameLength
+             }
+        }));
     } else if (buttonPressed == "back") {
         // Go back
         res.redirect('/lobby');

@@ -61,10 +61,11 @@ var numberOfSubmits = 0;
 router.get(`/`, async(req, res) => {
     //console.log(`Player ` + i + ` connected.`) // Counts connected players
     //++i;
-    console.log(req.query); // log created game parameters
+    // console.log(req.query); // log created game parameters
     ++numberOfSubmits;
     console.log(numberOfSubmits)
     if(numberOfSubmits%2 === 0) index = ++index%questions.results.length;
+
     let thingsToRender = {
         ...{user: req.user.username},
         ...getSingleQuestion(index, questions)
