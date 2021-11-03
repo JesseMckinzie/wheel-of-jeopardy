@@ -29,12 +29,18 @@ jQuery(function($){
                 if (App.mySocketId == '') {
                     App.mySocketId = IO.socket.id;
                     App.myUsername = $('#player-0').text();
-                    IO.socket.emit('save-user-and-socket-id', {socketid: App.mySocketId, username: App.myUsername});
+                    IO.socket.emit('save-user-and-socket-id', {socketid: App.mySocketId, username: App.myUsername, playerRole: '', currentPlayer: false});
                 };
                 IO.socket.emit('update-room-info');
             });
             // CLIENT: Update the room whenever a new user joins
             IO.socket.on('update-room-info', (data) => {
+                data.forEach(function (item, index) {
+                    if (item.username == App.myUsername) {
+                        App.currentPlayer = item.currentPlayer;
+                        App.myRole = item.playerRole;
+                    }
+                });                
                 App.updatePlayerScreen(data);
             });
             // CLIENT: Fires when the client joins a game. Currently empty
@@ -64,9 +70,10 @@ jQuery(function($){
 
         // The unique ID of this socket
         mySocketId: '',
-
         // The name of the client
         myUsername: '',
+        myRole: '',
+        currentPlayer: false,
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -93,9 +100,19 @@ jQuery(function($){
             data.forEach(function (item, index) {
                 if (item.username != App.myUsername) {
                     $('#player-'.concat('', i)).append('<p/>').text(item.username);
+                    if (!item.currentPlayer) {
+                        $('#cur-player-'.concat('', i)).replaceWith( "<p id='cur-player-".concat('', i, "'hidden>c u r r e n t  p l a y e r</p>"));
+                    } else {
+                        $('#cur-player-'.concat('', i)).replaceWith( "<p id='cur-player-".concat('', i, "'>c u r r e n t  p l a y e r</p>"));
+                    };
                     i = i + 1;
                 }
             });
+            if (App.currentPlayer) {
+                $('#cur-player-0').replaceWith( "<p id='cur-player-0'>c u r r e n t  p l a y e r</p>");
+            } else {
+                $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
+            };
         },
 
         /**
@@ -122,7 +139,9 @@ jQuery(function($){
          * Notifies the server that a user spun the wheel.
          */        
         onSpinBtn: function() {
-            IO.socket.emit('spin');
+            if (App.currentPlayer) {
+                IO.socket.emit('spin');
+            }
         },
 
         /**
