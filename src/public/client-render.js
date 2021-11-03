@@ -32,6 +32,8 @@ jQuery(function($){
                     IO.socket.emit('save-user-and-socket-id', {socketid: App.mySocketId, username: App.myUsername, playerRole: '', currentPlayer: false});
                 };
                 IO.socket.emit('update-room-info');
+                // initialize the game if this client is a host
+                IO.socket.emit('initialize-game', {gameId: $('#gameId').val(), passcode: $('#passcode').val(), gameLength: $('#gameLength').val()});
             });
             // CLIENT: Update the room whenever a new user joins
             IO.socket.on('update-room-info', (data) => {
@@ -40,7 +42,7 @@ jQuery(function($){
                         App.currentPlayer = item.currentPlayer;
                         App.myRole = item.playerRole;
                     }
-                });                
+                });
                 App.updatePlayerScreen(data);
             });
             // CLIENT: Fires when the client joins a game. Currently empty
@@ -62,7 +64,16 @@ jQuery(function($){
             // CLIENT: Updates the question whenever someone chooses a point value
             IO.socket.on('sendQuestion', (data) => {
                 App.getQuestion(data);
-            });                          
+            });
+            // CLIENT: Updates the player who buzzed-in first as the current player
+            IO.socket.on('decideWhoBuzzedFirst', (data) => {
+                data.forEach(function (item, index) {
+                    if (item.username == App.myUsername) {
+                        App.currentPlayer = item.currentPlayer;
+                    }
+                });
+                App.updatePlayerScreen(data);
+            });      
         }
     };
 
@@ -74,6 +85,7 @@ jQuery(function($){
         myUsername: '',
         myRole: '',
         currentPlayer: false,
+        questionDisplayed: false,
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -89,6 +101,12 @@ jQuery(function($){
             App.$doc.on('click', '#chat-send', App.onChatSend);
             App.$doc.on('click', '#spin-button', App.onSpinBtn);
             App.$doc.on('click', '#choose-q-val-btn', App.onChooseQuestionVal);
+            App.$doc.on('click', '#buzz-in-button', App.onBuzzIn);
+
+            App.$doc.on('click', '#submit-ans-a', App.onChooseA);
+            App.$doc.on('click', '#submit-ans-b', App.onChooseB);
+            App.$doc.on('click', '#submit-ans-c', App.onChooseC);
+            App.$doc.on('click', '#submit-ans-d', App.onChooseD);
         },
 
         /**
@@ -157,11 +175,13 @@ jQuery(function($){
          * Notifies the server that a user chose a question value.
          */         
         onChooseQuestionVal: function() {
-            var qVal = $('#q-val-input').val();
-            if (qVal) {
-                IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
-                $('#q-val-input').val() = '';
-            }            
+            if (App.currentPlayer) {
+                var qVal = $('#q-val-input').val();
+                if (qVal) {
+                    IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
+                    $('#q-val-input').val() = '';
+                }
+            };            
         },
 
         /**
@@ -175,7 +195,29 @@ jQuery(function($){
             $('#answer_b').text('b)'.concat(' ', data.answerB));
             $('#answer_c').text('c)'.concat(' ', data.answerC));
             $('#answer_d').text('d)'.concat(' ', data.answerD));
-        }
+            App.questionDisplayed = true;
+        },
+
+        onBuzzIn: function() {
+            // You can only buzz in if a question has been displayed
+            if (App.questionDisplayed) {
+                let time = new Date().getTime();
+                IO.socket.emit('buzzed-in', {time: time, username: App.myUsername});
+            }
+        },
+
+        onChooseA: function() {
+            IO.socket.emit('submit-answer', {choice: $('#answer_a').text(), username: App.myUsername});
+        },
+        onChooseB: function() {
+            IO.socket.emit('submit-answer', {choice: $('#answer_b').text(), username: App.myUsername});
+        },
+        onChooseC: function() {
+            IO.socket.emit('submit-answer', {choice: $('#answer_c').text(), username: App.myUsername});
+        },
+        onChooseD: function() {
+            IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
+        },                
     };
 
     IO.init();

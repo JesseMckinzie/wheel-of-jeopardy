@@ -25,6 +25,10 @@
           <!-- This is where the templates defined below will be used -->
     </div>    
   </div>
+  <!-- Some hidden variables -->
+   <input type="hidden" id="gameId" value={{gameId}}>
+   <input type="hidden" id="passcode" value={{passcode}}>
+   <input type="hidden" id="gameLength" value={{gameLength}}>
 
   <!-- Main Title Screen that appears when the page loads for the first time -->
   <script id="other-players-template" type="text/template">
@@ -74,17 +78,17 @@
       <p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>
     </div>
     <div class="answer-btns-container">
-      <form action="/player_actions" class="current-player-ans" method="POST">
-        <button class="ans-btn" name="button" value=""> a</button> 
-        <button class="ans-btn" name="button" value=""> b</button> 
-        <button class="ans-btn" name="button" value=""> c</button> 
-        <button class="ans-btn" name="button" value=""> d</button> 
+      <form action="" class="current-player-ans">
+        <button class="ans-btn" type="button" name="button" id="submit-ans-a" value=""> a</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-b" value=""> b</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-c" value=""> c</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-d" value=""> d</button> 
       </form>
     </div>
     <div class="player-btns-container">
       <form action="" class="current-player-actions">
         <button class="action-btn" type="button" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
-        <button class="action-btn" type="button" name="button" value=""> b u z z  i n</button> <br> <br>
+        <button class="action-btn" type="button" name="button" value="" id="buzz-in-button"> b u z z  i n</button> <br> <br>
       </form>      
       <form action="/player_actions" class="current-player-actions" method="POST">
         <button class="action-btn" name="button" value="back"> b a c k</button> <br> <br>

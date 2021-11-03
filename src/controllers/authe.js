@@ -31,8 +31,11 @@ router.get(`/register`, async(req, res) => {
 
 router.get('/wait', async(req, res) => {
     username = req.query.username;
+    gameId = req.query.gameId;
+    passcode = req.query.passcode;
+    gameLength = req.query.gameLength;
     console.log(username);
-    res.render('wait', {username})
+    res.render('wait', {username, gameId, passcode, gameLength})
 });
 
 /* POST signup page. */
@@ -143,7 +146,10 @@ router.post(`/host_api`, (req, res) => {
         res.redirect(url.format({
             pathname:"/wait",
             query: {
-               "username": username
+               "username": username,
+               "gameId": gameId,
+               "passcode": passcode,
+               "gameLength": gameLength
              }
         }));
         // need a game creation method here
@@ -161,7 +167,10 @@ router.post(`/host_api`, (req, res) => {
         res.redirect(url.format({
             pathname:"/wait",
             query: {
-               "username": username
+               "username": username,
+               "gameId": gameId,
+               "passcode": passcode,
+               "gameLength": gameLength
              }
         }));
     } else if (buttonPressed == "back") {
