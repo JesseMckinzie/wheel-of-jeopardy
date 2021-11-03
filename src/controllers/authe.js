@@ -87,16 +87,6 @@ router.post(`/reg_api`, (req, res) => {
     }
 });
 
-/* GET lobby page. */
-router.get(`/lobby`, (req, res) => {
-    let token = req.cookies.jwt;
-    var username;
-    jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
-        username = decodedUser.username;
-    });
-    res.render('lobby', {username});
-});
-
 gameIds = [0] // list to hold all game IDs
 
 /* POST lobby page. */

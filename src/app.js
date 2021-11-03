@@ -8,6 +8,7 @@ const jwt = require("jsonwebtoken");
 
 const autheRouter = require('./controllers/authe');
 const usersRouter = require('./controllers/users');
+const lobbyRouter = require('./controllers/lobby');
 const gameRouter = require('./controllers/game');
 
 const app = express();
@@ -48,6 +49,7 @@ app.get("/", (req, res) => {
 
 app.use('/', autheRouter);
 app.use('/users', verifyToken, usersRouter);
+app.use('/lobby', verifyToken, lobbyRouter);
 app.use('/game', verifyToken, gameRouter);
 
 // catch 404 and forward to error handler
