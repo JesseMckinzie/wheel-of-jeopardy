@@ -6,11 +6,6 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const jwt = require("jsonwebtoken");
 
-const autheRouter = require('./controllers/authe');
-const usersRouter = require('./controllers/users');
-const lobbyRouter = require('./controllers/lobby');
-const gameRouter = require('./controllers/game');
-
 const app = express();
 
 const verifyToken = (req, res, next) => {
@@ -47,10 +42,10 @@ app.get("/", (req, res) => {
   );
 });
 
-app.use('/', autheRouter);
-app.use('/users', verifyToken, usersRouter);
-app.use('/lobby', verifyToken, lobbyRouter);
-app.use('/game', verifyToken, gameRouter);
+app.use('/', require('./controllers/authe'));
+app.use('/users', verifyToken, require('./controllers/users'));
+app.use('/lobby', verifyToken, require('./controllers/lobby'));
+app.use('/game', verifyToken, require('./controllers/game'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
