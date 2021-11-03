@@ -38,7 +38,7 @@ router.get('/wait', async(req, res) => {
 });
 
 /* POST signup page. */
-router.post(`/reg_api`, (req, res) => {
+router.post(`/register`, (req, res) => {
     var buttonPressed = req.body.button;
     // console.log(buttonPressed);
     if (buttonPressed == "create") {
@@ -94,7 +94,7 @@ router.get("/logout", (req, res) => {
 
 var i = 1;
 // get data from client
-router.post('/api', (req, res) => {
+router.post('/login', (req, res) => {
     // console.log(req.body);
     var userName = req.body.username;
     var email = req.body.email;
