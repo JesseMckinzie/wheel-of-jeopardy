@@ -1,26 +1,44 @@
 require("dotenv").config();
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
 const cookieParser = require('cookie-parser');
-const logger = require('morgan');
+const express = require('express');
+const http = require('http');
+const createError = require('http-errors');
 const jwt = require("jsonwebtoken");
+const logger = require('morgan');
+const path = require('path');
+const { Server } = require("socket.io");
+const woj = require('./wojgame');
 
+/**
+ * Create environment and assign port
+ */
 const app = express();
+const port = process.env.PORT || '3000';
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+const server = http.createServer(app);
+
+/* Create socket and initialize the game */
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('a client connected');
+  woj.initGame(io, socket);
+});
+
 
 const verifyToken = (req, res, next) => {
-  let token = req.cookies.jwt;
   // COOKIE PARSER GIVES YOU A .cookies PROP, WE NAMED OUR TOKEN jwt
-  // console.log("Cookies: ", req.cookies.jwt);
+  let token = req.cookies.jwt;
 
   jwt.verify(token, process.env.JWT_SECRET, (err, decodedUser) => {
     if (err || !decodedUser) {
-      // return res.status(401).json({ error: "Unauthorized Request" });
       return res.render('authe.hbs');
     }
-    req.user = decodedUser;
     // ADDS A .user PROP TO REQ FOR TOKEN USER
-    //console.log(decodedUser);
+    req.user = decodedUser;
 
     next();
   });
@@ -30,11 +48,11 @@ const verifyToken = (req, res, next) => {
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
+app.use(cookieParser());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(logger('dev'));
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.get("/", (req, res) => {
   verifyToken(req, res, () =>
@@ -63,4 +81,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+server.listen(port, () => {
+  // console.log("Nodemon listening");
+});
