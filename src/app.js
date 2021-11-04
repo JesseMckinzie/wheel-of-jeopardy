@@ -9,7 +9,25 @@ const path = require('path');
 const { Server } = require("socket.io");
 const woj = require('./wojgame');
 
+/**
+ * Create environment and assign port
+ */
 const app = express();
+const port = process.env.PORT || '3000';
+app.set('port', port);
+
+/**
+ * Create HTTP server.
+ */
+const server = http.createServer(app);
+
+/* Create socket and initialize the game */
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('a client connected');
+  woj.initGame(io, socket);
+});
+
 
 const verifyToken = (req, res, next) => {
   // COOKIE PARSER GIVES YOU A .cookies PROP, WE NAMED OUR TOKEN jwt
@@ -63,4 +81,6 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+server.listen(port, () => {
+  // console.log("Nodemon listening");
+});
