@@ -29,11 +29,14 @@ jQuery(function($){
                 if (App.mySocketId == '') {
                     App.mySocketId = IO.socket.id;
                     App.myUsername = $('#player-0').text();
-                    IO.socket.emit('save-user-and-socket-id', {socketid: App.mySocketId, username: App.myUsername, playerRole: '', currentPlayer: false});
+                    IO.socket.emit('save-user-and-socket-id', {socketid: App.mySocketId, username: App.myUsername, playerRole: '', currentPlayer: false, score: 0});
                 };
+                // Update the room whenever someone connects
                 IO.socket.emit('update-room-info');
                 // initialize the game if this client is a host
-                IO.socket.emit('initialize-game', {gameId: $('#gameId').val(), passcode: $('#passcode').val(), gameLength: $('#gameLength').val()});
+                if (App.myRole == 0) {
+                    IO.socket.emit('initialize-game', {gameId: $('#gameId').val(), passcode: $('#passcode').val(), gameLength: $('#gameLength').val()});
+                };
             });
             // CLIENT: Update the room whenever a new user joins
             IO.socket.on('update-room-info', (data) => {
@@ -86,6 +89,7 @@ jQuery(function($){
         myRole: '',
         currentPlayer: false,
         questionDisplayed: false,
+        timeQuestionDisplayed: new Date().getTime(),
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -158,7 +162,7 @@ jQuery(function($){
          */        
         onSpinBtn: function() {
             if (App.currentPlayer) {
-                IO.socket.emit('spin');
+                IO.socket.emit('spin', {username: App.myUsername});
             }
             App.questionDisplayed = false;
         },
@@ -168,7 +172,12 @@ jQuery(function($){
          * @param data{String}
          */          
         getQuestionCategory: function(data) {
-            $('#game-area').html($('#wheel-template').html());
+            if (App.currentPlayer) {
+                $('#game-area').html($('#wheel-template').html());
+            } else {
+                // render a different screen for a person who is not the current player
+                $('#game-area').html($('#wheel-template-alt').html());
+            };
             $('#question-cat').append('<p/>').text(data);
         },
 
@@ -196,14 +205,22 @@ jQuery(function($){
             $('#answer_b').text('b)'.concat(' ', data.answerB));
             $('#answer_c').text('c)'.concat(' ', data.answerC));
             $('#answer_d').text('d)'.concat(' ', data.answerD));
+            // Set the time that the question displayed
+            App.timeQuestionDisplayed = new Date().getTime();
             App.questionDisplayed = true;
+            // No one is the current player until someone buzzes in
+            App.currentPlayer = false;
+            $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
+            $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
+            $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
         },
 
         onBuzzIn: function() {
             // You can only buzz in if a question has been displayed
             if (App.questionDisplayed) {
                 let time = new Date().getTime();
-                IO.socket.emit('buzzed-in', {time: time, username: App.myUsername});
+                // Submit the time you buzzed in minus the time the question was first displayed
+                IO.socket.emit('buzzed-in', {time: time - App.timeQuestionDisplayed, username: App.myUsername});
             }
         },
 

@@ -59,6 +59,9 @@ const getSingleQuestion = (index, questions) => {
       gameInfo = data;
       gameInit = true;
       //questions = getQuestions(gameInfo.gameLength); // get all the questions in the beginning
+      // Notify everyone in the room that the game has been created
+      io.emit('chat-message-bounce', {username: "System", msg: "The game is initialized with ".concat(data.gameLength, " questions. The room's ID is ", data.gameId,
+      " and the passcode is ", data.passcode, ".")});
     }
   });  
   // SERVER: Updates all clients' rooms
@@ -86,14 +89,21 @@ const getSingleQuestion = (index, questions) => {
       players.push(data);
     };
     console.log(players);
+    // Notify everyone in the room that a user just joined
+    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" just joined the game.")});
   });
   // SERVER: Sends a client chat message to all clients
   gameSocket.on('chat-message', (data) => {
     io.emit('chat-message-bounce', data);
   });
   // SERVER: Return the chosen question category after a wheel spin
-  gameSocket.on('spin', () => {
-    io.emit('getQuestionCategory', gameCategories[Math.floor(Math.random()*gameCategories.length)]);
+  gameSocket.on('spin', (data) => {
+    chosenQCat = gameCategories[Math.floor(Math.random()*gameCategories.length)];
+    io.emit('getQuestionCategory', chosenQCat);
+    // Notify everyone in the room that a user spun the wheel
+    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" just spun the wheel.")});
+    // Notify everyone in the room of the current question category
+    io.emit('chat-message-bounce', {username: "System", msg: "The current question category is ".concat(chosenQCat)});
   });
   // SERVER: Return a question corresponding to the requested point value
   gameSocket.on('choose-q-value', (data) => {
@@ -110,6 +120,8 @@ const getSingleQuestion = (index, questions) => {
     chosenQ = getSingleQuestion(Math.floor(Math.random()*questions.results.length), questions);
     gameInfo.chosenQ = chosenQ;
     io.emit('sendQuestion', chosenQ);
+    // Notify everyone in the room of the chosen question point value
+    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" has chosen a point value of ", data.qVal)});
     //io.emit('update-room-info', players);
   });
   // SERVER: Times everyone buzzing in
@@ -128,7 +140,7 @@ const getSingleQuestion = (index, questions) => {
       playersBuzzedTime.length = 0;
       // Update current player
       players.forEach(function (item, index) {
-        // check if socket connection already exists, update socket id but keep username
+        // Update the current player according to the winner of the buzzer
         if (item.username == winner.username) {
           players[index].currentPlayer = true;
           currentPlayer = players[index].playerRole;
@@ -137,6 +149,8 @@ const getSingleQuestion = (index, questions) => {
         }
       });
       io.emit('decideWhoBuzzedFirst', players);
+      // Notify everyone in the room of the person who buzzed in first
+      io.emit('chat-message-bounce', {username: "System", msg: winner.username.concat(" is the person who buzzed in first!")});
     };
   });
   
@@ -145,9 +159,18 @@ const getSingleQuestion = (index, questions) => {
     correctChoice = gameInfo.chosenQ.correctAnswer;
     if (ansChoice == correctChoice) {
       console.log(data.username.concat(' got points'));
+      msg = data.username.concat(" picked answer choice ",
+      ansChoice, ". The correct answer was ", correctChoice, ".", 
+      data.username, " got points.");
     } else {
       console.log(data.username.concat(' lost points'));
+      msg = data.username.concat(" picked answer choice ",
+      ansChoice, ". The correct answer was ", correctChoice, ".", 
+      data.username, " lost points."); 
     }
+    // Need to update the player's score
+    // Notify users of the current player's answer choice, and if they won or lost
+    io.emit('chat-message-bounce', {username: "System", msg: msg});
   });
   
   // Host Events
