@@ -1,9 +1,9 @@
 {
   "name": "src",
   "version": "0.0.0",
-  "private": true,
+  "main": "server.js",
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon server.js"
   },
   "dependencies": {
     "axios": "^0.23.0",
