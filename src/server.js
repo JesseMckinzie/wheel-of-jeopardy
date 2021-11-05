@@ -56,7 +56,7 @@ app.use(express.json());
 
 app.get("/", (req, res) => {
   verifyToken(req, res, () =>
-    res.redirect("game")
+    res.redirect("lobby")
   );
 });
 
