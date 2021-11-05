@@ -10,7 +10,13 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Game.belongsTo(models.Server)
+      Game.hasMany(models.User);
+      Game.belongsToMany(models.Question, {
+        through: "GameQuestion",
+        foreignKey: "gameId",
+        otherKey: "questionId",
+      });
     }
   };
   Game.init({
