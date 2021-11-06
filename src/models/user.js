@@ -16,7 +16,8 @@ module.exports = (sequelize, DataTypes) => {
   User.init({
     username: DataTypes.STRING,
     email: DataTypes.STRING,
-    gameId: DataTypes.INTEGER
+    gameId: DataTypes.INTEGER,
+    cumulativeScore: DataTypes.INTEGER,
   }, {
     sequelize,
     modelName: 'User',
