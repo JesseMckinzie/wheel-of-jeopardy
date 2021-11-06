@@ -72,38 +72,28 @@ router.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-var i = 1;
+let i = 1;
 // get data from client
 router.post('/login', (req, res) => {
     // console.log(req.body);
-    var userName = req.body.username;
-    var email = req.body.email;
+    User.findOne({
+        where: {
+            username: req.body.username,
+            email: req.body.email
+        },
+    }).then((foundUser) => {
+    if (foundUser) {
+            console.log(`Player ${i} ${foundUser.username} has connected.`);
+            ++i;
 
-    db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
-        if(result.length == 0) {
-            console.log("User does not exist") // Need to add alert for this
-            redirect = '/';
-        } else {
-
-            result = JSON.stringify(result);
-            result = JSON.parse(result)[0];
-
-            if(email !== "" && userName !== "" && result.email === email) {
-                console.log("Log in successful!")
-                console.log(`Player ${i} (${userName}) has connected.`);
-                ++i;
-                
-                const token = createToken(userName, email)
-                res.cookie("jwt", token);
-                
-                res.redirect('/lobby');
-                redirect = '/lobby';
-            } else {
-                console.log("Incorrect username or email.")
-                res.redirect('/')
-                redirect = '/'
-            } 
-        }
+            const token = createToken(foundUser.username, foundUser.email);
+            console.log(token);
+            res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
+            res.redirect(`/lobby`);
+    } else {
+        console.log(`Incorrect username or email.`)
+        res.redirect(`/`);
+    }
     });
 });
 
