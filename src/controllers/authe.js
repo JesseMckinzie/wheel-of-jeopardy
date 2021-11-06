@@ -5,6 +5,8 @@ const axios = require('axios')
 const db = require('../database/database')
 const jwt = require("jsonwebtoken");
 
+const User = require("../models").User;
+
 const createToken = (username, email) => {
     return jwt.sign(
         {
@@ -42,41 +44,19 @@ router.post(`/register`, (req, res) => {
     var buttonPressed = req.body.button;
     // console.log(buttonPressed);
     if (buttonPressed == "create") {
-
-        var userName = req.body.username;
-        var email = req.body.email;
-
-        db.query(`SELECT username FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
-            
-            // Check if username is already in use
-            if(result.length != 0) {
-
-                console.log('Username already in use.')
-                res.render('register'); // route back to registration page, need to add alert
-
-            } else {
-
-                //Check if email is already in use
-                db.query(`SELECT email FROM users WHERE email = "` + email + `"`, (err, result, field) => {
-                    if(result.length != 0) {
-
-                        console.log('Email already in use.')
-                        res.render('register'); // route back to registration page, need to add alert
-
-                    } else { // If username and email have not been used, create a new account
-
-                        var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
-    
-                        db.query(command, (err, result) => {
-                            if (err) throw err;
-                            console.log('User has been added to database.');
-                        });
-                        res.render('authe') // Route to login page
-                    }
-                });
-            }
+        User.create(req.body)
+        .then((newUser) => {
+            const token = createToken(newUser.username, newUser.email);
+            console.log(token);
+            res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
+            res.redirect(`/lobby`);
+        })
+        .catch((err) => {
+            // res.send(`err ${err}`);
+            console.log(err.errors[0].message);
+            res.render(`register`);
+            // res.redirect(`/register`);
         });
-
     } else if (buttonPressed == "back") {
         // Go back to login
         res.clearCookie("jwt");
@@ -125,7 +105,6 @@ router.post('/login', (req, res) => {
             } 
         }
     });
-   // res.redirect(redirect);
 });
 
 module.exports = router;
