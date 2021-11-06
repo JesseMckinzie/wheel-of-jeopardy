@@ -1,10 +1,13 @@
 {
     "development": {
-      "username": "postgres",
+      "username": "root",
       "password": "password",
-      "database": "wheelOfJeopardy",
+      "database": "applications",
       "host": "127.0.0.1",
-      "dialect": "postgres"
+      "dialect": "mysql",
+      "define": {
+        "timestamps": false
+      }
     },
     "production": {
       "use_env_variable": "DATABASE_URL"
