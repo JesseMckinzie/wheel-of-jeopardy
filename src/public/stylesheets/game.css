@@ -214,7 +214,7 @@ body {
   100%{-webkit-transform: rotate(420deg);}
 }
 
-.choose-q-val {
+.choose-q-val-container {
   background: white;
   border: 1px outset #dedede;
   width: 20%;
@@ -228,7 +228,35 @@ body {
   background-color: #e8e8d8;
   cursor: move;
   animation: display 0.2s;
+  animation-fill-mode: forwards;  
+}
+
+.choose-q-val {
+  background: white;
+  width: 30%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 43%;
+  right: 5%;
+  background-color: #e8e8d8;
+  cursor: move;
+  animation: display 0.2s;
   animation-fill-mode: forwards;
+}
+
+button.close-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 25px;
+  height: 25px;
+  color: white;
+  text-align: center;
+  font-weight: bold;
+  background: red;
 }
 
 .title {
@@ -238,6 +266,7 @@ body {
   color: #fff;
   text-shadow: 0 0 #fff;
   line-height: 30px;
+  background-image: -webkit-linear-gradient(top, #602ba4, #c574ed);
   background-image: -webkit-linear-gradient(left, #0050e0, #3890f8);
 }
 

@@ -119,20 +119,35 @@
     <div class="wheel-container">
       <img id="wheel-img" src="/img/wheel.svg" alt="current-profile-pic">
       <div id="triangle"></div>
-      <form action="" class="choose-q-val" id="choose-q-val" draggable="true">
-        <div class="title">Choose a point value</div>
-        <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
-        <label for="pt-val-10">10</label><br>
-        <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
-        <label for="pt-val-20">20</label><br>
-        <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
-        <label for="pt-val-30">30</label><br>
-        <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
-        <label for="pt-val-40">40</label><br>
-        <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
-        <label for="pt-val-50">50</label>
-        <button type="button" id="choose-q-val-btn"> c h o o s e </button>
-      </form>      
+      <div class="choose-q-val-container" draggable="true">
+        <div class="title">
+          Choose a point value
+          <button type="button" class="close-button">X</button>
+        </div>
+        <form action="" class="choose-q-val" id="choose-q-val">
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
+            <label for="pt-val-10">10</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
+            <label for="pt-val-20">20</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
+            <label for="pt-val-30">30</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
+            <label for="pt-val-40">40</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
+            <label for="pt-val-50">50</label>
+          </div><br>
+          <button type="button" id="choose-q-val-btn"> c h o o s e </button>
+        </form>
+      </div>      
     </div>
   </script>
 
