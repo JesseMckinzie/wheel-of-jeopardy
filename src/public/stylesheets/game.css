@@ -48,7 +48,7 @@ body {
   overflow-y: auto;
   height: 87%;
 }
-#messages { list-style-type: none; margin: 0; padding: 0; width: 100%;}
+#messages { list-style-type: none; margin: 0; padding: 0; width: 100%; overflow:scroll;}
 #messages > li { padding: 0.5rem 1rem; }
 #messages > li:nth-child(odd) { background: #efefef; }
 #chat-send {
@@ -171,3 +171,56 @@ body {
   align-items: center;  
   border: 2px solid black;
 }
+
+#triangle {
+  width: 0;
+  height: 0;
+  border-top: 50px solid transparent;
+  border-right: 100px solid black;
+  border-bottom: 50px solid transparent;
+  position: absolute;
+  top: 43%;
+  right: 40%;
+}
+
+#wheel-img {
+  width: 60%;
+  height: auto;
+}
+
+@-webkit-keyframes spin-360 {
+  100%{-webkit-transform: rotate(720deg);}
+}
+
+@-webkit-keyframes spin-330 {
+  100%{-webkit-transform: rotate(660deg);}
+}
+
+@-webkit-keyframes spin-300 {
+  100%{-webkit-transform: rotate(600deg);}
+}
+
+@-webkit-keyframes spin-270 {
+  100%{-webkit-transform: rotate(540deg);}
+}
+
+@-webkit-keyframes spin-240 {
+  100%{-webkit-transform: rotate(480deg);}
+}
+
+@-webkit-keyframes spin-210 {
+  100%{-webkit-transform: rotate(420deg);}
+}
+
+.choose-q-val {
+  border: 2px solid black;
+  width: 20%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  top: 43%;
+  right: 5%;
+}
+

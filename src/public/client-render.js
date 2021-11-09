@@ -76,7 +76,11 @@ jQuery(function($){
                     }
                 });
                 App.updatePlayerScreen(data);
-            });      
+            });     
+            // CLIENT: Reset the wheel for the next round
+            IO.socket.on('reset-wheel', () => {
+                $('#game-area').html(App.$initWheel);
+            });             
         }
     };
 
@@ -157,6 +161,7 @@ jQuery(function($){
         updateChatBox: function(data) {
             var msg = data.username.concat(': ', data.msg);
             $("#messages").append('<li>'.concat(msg, '</li>'));
+            $("#messages").scrollTop($("#messages").prop("scrollHeight"));
         },
 
         /**
@@ -174,13 +179,19 @@ jQuery(function($){
          * @param data{String}
          */          
         getQuestionCategory: function(data) {
+            $("#wheel-img").one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend animationend',   
+            function(e) {
+                //$("#wheel-img").css("animation", "");
+            });
             if (App.currentPlayer) {
                 $('#game-area').html($('#wheel-template').html());
+                $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
             } else {
                 // render a different screen for a person who is not the current player
                 $('#game-area').html($('#wheel-template-alt').html());
+                $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
             };
-            $('#question-cat').append('<p/>').text(data);
+            // $('#question-cat').append('<p/>').text(data.chosen_q);
         },
 
         /**
@@ -188,12 +199,12 @@ jQuery(function($){
          */         
         onChooseQuestionVal: function() {
             if (App.currentPlayer) {
-                var qVal = $('#q-val-input').val();
+                var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                 if (qVal) {
                     IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
                     $('#q-val-input').val() = '';
                 }
-            };            
+            };          
         },
 
         /**

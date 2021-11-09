@@ -7,7 +7,8 @@ var players = [];
 var numOfActivePlayers = players.length;
 var currentPlayer = 0;
 var curRound = 0;
-var gameCategories = ["History", "Science", "Art", "Geography"];
+var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+var gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
 const questions = {"response_code":0,"results":[{"category":"History","type":"multiple","difficulty":"easy","question":"The%20original%20Roman%20alphabet%20lacked%20the%20following%20letters%20EXCEPT%3A","correct_answer":"X","incorrect_answers":["W","U","J"]},{"category":"Science%20%26%20Nature","type":"multiple","difficulty":"hard","question":"Which%20moon%20is%20the%20only%20satellite%20in%20our%20solar%20system%20to%20possess%20a%20dense%20atmosphere%3F","correct_answer":"Titan","incorrect_answers":["Europa","Miranda","Callisto"]},{"category":"Entertainment%3A%20Video%20Games","type":"multiple","difficulty":"medium","question":"In%20Terraria%2C%20what%20does%20the%20Wall%20of%20Flesh%20not%20drop%20upon%20defeat%3F","correct_answer":"Picksaw","incorrect_answers":["Pwnhammer","Breaker%20Blade","Laser%20Rifle"]},{"category":"Geography","type":"multiple","difficulty":"easy","question":"How%20many%20stars%20are%20featured%20on%20New%20Zealand%27s%20flag%3F","correct_answer":"4","incorrect_answers":["5","2","0"]},{"category":"Entertainment%3A%20Television","type":"multiple","difficulty":"hard","question":"In%20%22Star%20Trek%22%2C%20who%20was%20the%20founder%20of%20the%20Klingon%20Empire%20and%20its%20philosophy%3F","correct_answer":"Kahless%20the%20Unforgettable","incorrect_answers":["Lady%20Lukara%20of%20the%20Great%20Hall","Molor%20the%20Unforgiving","Dahar%20Master%20Kor"]}]};
 //var questions;
 var gameInit = false; // has the game been created yet?
@@ -108,8 +109,9 @@ const getSingleQuestion = (index, questions) => {
   });
   // SERVER: Return the chosen question category after a wheel spin
   gameSocket.on('spin', (data) => {
-    chosenQCat = gameCategories[Math.floor(Math.random()*gameCategories.length)];
-    io.emit('getQuestionCategory', chosenQCat);
+    chosenInd = Math.floor(Math.random()*gameCategories.length);
+    chosenQCat = gameCategories[chosenInd];
+    io.emit('getQuestionCategory', {chosen_q : chosenQCat, chosen_q_spin_val : gameCategoriesSpinValues[chosenInd]});
     // Notify everyone in the room that a user spun the wheel
     io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" just spun the wheel.")});
     // Notify everyone in the room of the current question category
@@ -167,20 +169,19 @@ const getSingleQuestion = (index, questions) => {
   gameSocket.on('submit-answer', (data) => {
     ansChoice = data.choice.split(' ').slice(1).join(' ');
     correctChoice = gameInfo.chosenQ.correctAnswer;
+    msg = data.username.concat(" picked answer choice ", ansChoice, ".");
+    io.emit('chat-message-bounce', {username: "System", msg: msg});
+    msg = "The correct answer was ".concat(correctChoice, ".");
+    io.emit('chat-message-bounce', {username: "System", msg: msg});
     if (ansChoice == correctChoice) {
-      console.log(data.username.concat(' got points'));
-      msg = data.username.concat(" picked answer choice ",
-      ansChoice, ". The correct answer was ", correctChoice, ".", 
-      data.username, " got points.");
+      msg = data.username.concat(" got points.");
     } else {
-      console.log(data.username.concat(' lost points'));
-      msg = data.username.concat(" picked answer choice ",
-      ansChoice, ". The correct answer was ", correctChoice, ".", 
-      data.username, " lost points."); 
+      msg = data.username.concat(" lost points."); 
     }
     // Need to update the player's score
     // Notify users of the current player's answer choice, and if they won or lost
     io.emit('chat-message-bounce', {username: "System", msg: msg});
+    io.emit('reset-wheel');
   });
   
   // Host Events

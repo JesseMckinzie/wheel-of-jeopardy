@@ -110,22 +110,36 @@
 
   <script id="init-wheel-template" type="text/template">
     <div class="wheel-container">
-      <img id="wheel-img" src="/img/wheel.png" alt="current-profile-pic" style="width:60%;height:auto;border:2px solid black;">
+      <img id="wheel-img" src="/img/wheel.svg" alt="current-profile-pic">
+      <div id="triangle"></div>
     </div>
   </script>
 
   <script id="wheel-template" type="text/template">
     <div class="wheel-container">
-      <p id="question-cat"> </p>
-      <form action="" class="choose-q-val">
-        <input id="q-val-input" autocomplete="off" placeholder="Choose a point value here"/><button type="button" id="choose-q-val-btn"> c h o o s e </button>
+      <img id="wheel-img" src="/img/wheel.svg" alt="current-profile-pic">
+      <div id="triangle"></div>
+      <form action="" class="choose-q-val" id="choose-q-val">
+        <label>C h o o s e  a  p o i n t  v a l u e</label>
+        <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
+        <label for="pt-val-10">10</label><br>
+        <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
+        <label for="pt-val-20">20</label><br>
+        <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
+        <label for="pt-val-30">30</label><br>
+        <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
+        <label for="pt-val-40">40</label><br>
+        <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
+        <label for="pt-val-50">50</label>
+        <button type="button" id="choose-q-val-btn"> c h o o s e </button>
       </form>      
     </div>
   </script>
 
   <script id="wheel-template-alt" type="text/template">
     <div class="wheel-container">
-      <p id="question-cat"> </p>     
+      <img id="wheel-img" src="/img/wheel.svg" alt="current-profile-pic">
+      <div id="triangle"></div>  
     </div>
   </script>  
 
