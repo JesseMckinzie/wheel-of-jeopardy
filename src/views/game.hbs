@@ -16,7 +16,7 @@
           </div>
           <div class="current-profile-information">
             <p id="player-1-info">
-              n a m e  : <br>
+              n a m e  : M i n h<br>
               s c o r e  : <br>
               a c t i o n : <br>
             </p>
@@ -48,15 +48,17 @@
       </div>
       
       <div class="user-profile">
-        <div class="current-profile-pic">
-          <img src="/img/profile_pic.png" alt="current-profile-pic">
-        </div>
-        <div class="current-profile-information">
-          <p>
-            n a m e  : {{user}}<br>
-            s c o r e  : <br>
-            a c t i o n : <br>
-          </p>
+        <div class="cur-player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : {{user}}<br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>
         </div>
         <div class="answer-btns-container">
           <form action="/game/player_actions" class="current-player-ans" method="POST">

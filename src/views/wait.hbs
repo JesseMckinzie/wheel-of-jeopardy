@@ -22,7 +22,7 @@
     </div>    
 
     <div class="game-area" id="game-area">
-          <!-- This is where the templates defined below will be used -->
+          
     </div>    
   </div>
   <!-- Some hidden variables -->
@@ -34,14 +34,14 @@
   <script id="other-players-template" type="text/template">
 
       <div class="titleWrapper">
-        <p> timer</p>
+        <p id="timer"> timer</p>
         <div class="player-card">
           <div class="current-profile-pic">
             <img src="/img/profile_pic.png" alt="current-profile-pic">
           </div>
           <div class="current-profile-information">
             <p>
-              n a m e  : <p id="player-1"> </p><br>
+              n a m e  : <a id="player-1"> </a><br>
               s c o r e  : <br>
               a c t i o n : <br>
             </p>
@@ -54,7 +54,7 @@
           </div>
           <div class="current-profile-information">
             <p>
-              n a m e  : <p id="player-2"> </p><br>
+              n a m e  : <a id="player-2"> </a><br>
               s c o r e  : <br>
               a c t i o n : <br>
             </p>
@@ -66,16 +66,18 @@
   </script>
 
   <script id="current-player-template" type="text/template">
-    <div class="current-profile-pic">
-      <img src="/img/profile_pic.png" alt="current-profile-pic">
-    </div>
-    <div class="current-profile-information">
-      <p>
-        n a m e  : <p id="player-0">{{username}}</p><br>
-        s c o r e  : <br>
-        a c t i o n : <br>
-      </p>
-      <p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>
+    <div class="cur-player-card">
+      <div class="current-profile-pic">
+        <img src="/img/profile_pic.png" alt="current-profile-pic">
+      </div>
+      <div class="current-profile-information">
+        <p>
+          n a m e  : <a id="player-0">{{username}}</a><br>
+          s c o r e  : <br>
+          a c t i o n : <br>
+        </p>
+        <p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>
+      </div>
     </div>
     <div class="answer-btns-container">
       <form action="" class="current-player-ans">
@@ -85,12 +87,10 @@
         <button class="ans-btn" type="button" name="button" id="submit-ans-d" value=""> d</button> 
       </form>
     </div>
-    <div class="player-btns-container">
-      <form action="" class="current-player-actions">
+    <div class="player-btns-container"> 
+      <form action="/game/player_actions" class="current-player-actions" method="POST">
         <button class="action-btn" type="button" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
         <button class="action-btn" type="button" name="button" value="" id="buzz-in-button"> b u z z  i n</button> <br> <br>
-      </form>      
-      <form action="/game/player_actions" class="current-player-actions" method="POST">
         <button class="action-btn" name="button" value="back"> b a c k</button> <br> <br>
         <button class="action-btn" name="button" value="logout"> l o g  o u t</button>
       </form>
@@ -106,6 +106,12 @@
         <input id="chat-input" autocomplete="off" placeholder=""/><button type="button" id="chat-send"> s e n d </button>
       </div>
     </form>
+  </script>
+
+  <script id="init-wheel-template" type="text/template">
+    <div class="wheel-container">
+      <img id="wheel-img" src="/img/wheel.png" alt="current-profile-pic" style="width:60%;height:auto;border:2px solid black;">
+    </div>
   </script>
 
   <script id="wheel-template" type="text/template">

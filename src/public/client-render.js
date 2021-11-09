@@ -100,6 +100,8 @@ jQuery(function($){
             $('#current-player').html(App.$templateCurrentPlayerInfo);
             App.$templateChat = $('#chat-template').html();
             $('#chat-container').html(App.$templateChat);
+            App.$initWheel = $('#init-wheel-template').html();
+            $('#game-area').html(App.$initWheel);
 
             // Binds buttons to events            
             App.$doc.on('click', '#chat-send', App.onChatSend);

@@ -83,17 +83,16 @@ body {
   display: flex; 
   justify-content: center;
   align-items: center;
-  height: 12.5%; 
+  height: 10%; 
   box-sizing: border-box;
-  /* border: 2px solid black;   */
 }
 .ans-btn {
   padding: 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;  
+  font-size: 16px;  
+  height: 50%;
   border-radius: 50%;
 }
 
@@ -107,9 +106,9 @@ body {
   display: flex; 
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   height: 25%; 
   box-sizing: border-box;
-  border: 2px solid black;  
 }
 .action-btn {
   padding: 10px;
@@ -119,6 +118,12 @@ body {
   font-size: 16px;
 }
 
+#timer {
+  border: 2px solid black;
+  text-align: center;
+  position: fixed;
+  top: 0;
+}
 .other-players {
   background: white; 
   padding: 0.25rem; 
@@ -132,10 +137,23 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border: 2px solid black;
+}
+.player-card {
+  width: 100%;
+}
+.cur-player-card {
+  width: 70%;
 }
 .current-profile-pic, .current-profile-information {
   display: inline-block;
+  *display: inline;
+}
+.player-card + .player-card { 
+  margin-top: 10px;
+}
+
+.current-profile-information {
+  vertical-align: top;
 }
 
 .game-area {
@@ -149,6 +167,7 @@ body {
   height: 74%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;  
   border: 2px solid black;
 }
