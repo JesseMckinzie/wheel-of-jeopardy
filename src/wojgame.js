@@ -25,6 +25,15 @@ const getQuestions = async(gameLength) => {
   return questions;
 }
 
+
+// Fisher-Yates shuffle from https://javascript.info/task/shuffle
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 const getSingleQuestion = (index, questions) => {
    var information = questions.results[index]
    var question = unescape(information.question);
@@ -32,7 +41,7 @@ const getSingleQuestion = (index, questions) => {
    var answers = information.incorrect_answers;
    answers.push(correctAnswer);
 
-   //shuffleArray(answers);
+   shuffle(answers);
 
    const answerA = unescape(answers[0]);
    const answerB = unescape(answers[1]);
