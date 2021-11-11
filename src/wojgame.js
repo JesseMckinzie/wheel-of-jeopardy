@@ -139,6 +139,7 @@ const getSingleQuestion = (index, questions) => {
     if (!found) {
       // Update the player role, either 0 = host, or > 0 for players 1 and 2
       data.playerRole = numOfActivePlayers;
+      data.score = 0;
       numOfActivePlayers++;
       if (data.playerRole == currentPlayer) {
         data.currentPlayer = true;
@@ -240,8 +241,15 @@ const getSingleQuestion = (index, questions) => {
     }
     
     playerScores[currentPlayer] = currentScore;  //update current player's score
+    players.forEach(function (item, index) {
+      // Update the current player according to the winner of the buzzer
+      if (item.username == data.username) {
+        players[index].score = currentScore;
+      };
+    });    
     // Notify users of the current player's answer choice, and if they won or lost
     io.emit('chat-message-bounce', {username: "System", msg: msg});
+    io.emit('update-scores', [{username: data.username, score: currentScore}]);
     io.emit('reset-wheel');
   });
   

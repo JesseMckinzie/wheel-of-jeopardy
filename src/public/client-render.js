@@ -80,7 +80,11 @@ jQuery(function($){
             // CLIENT: Reset the wheel for the next round
             IO.socket.on('reset-wheel', () => {
                 $('#game-area').html(App.$initWheel);
-            });             
+            });
+            // CLIENT: Update scores
+            IO.socket.on('update-scores', (data) => {
+                App.updateScores(data);
+            });                         
         }
     };
 
@@ -150,6 +154,18 @@ jQuery(function($){
             } else {
                 $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
             };
+            App.updateScores(data);
+        },
+
+        updateScores: function(data) {
+            data.forEach(function (item, index) {
+                for (let i = 0; i < 3; i++) {
+                    if ($('#player-'.concat(i)).text() == item.username) {
+                        $('#score-'.concat(i)).text(item.score);
+                        break;
+                    };
+                };
+            });
         },
 
         /**
