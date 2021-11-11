@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require('express');
 const router = express.Router();
+const alert = require('alert'); 
 const axios = require('axios')
 const jwt = require("jsonwebtoken");
 
@@ -52,7 +53,7 @@ router.post(`/register`, (req, res) => {
         })
         .catch((err) => {
             // res.send(`err ${err}`);
-            console.log(err.errors[0].message);
+            alert(err.errors[0].message);
             res.render(`register`);
             // res.redirect(`/register`);
         });
@@ -90,7 +91,7 @@ router.post('/login', (req, res) => {
             res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
             res.redirect(`/lobby`);
     } else {
-        console.log(`Incorrect username or email.`)
+        alert(`Incorrect username or email.`)
         res.redirect(`/`);
     }
     });
