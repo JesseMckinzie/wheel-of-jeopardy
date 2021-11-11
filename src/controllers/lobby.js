@@ -40,10 +40,6 @@ router.post(`/host_api`, (req, res) => {
     var gameLength = req.body.game_length;
     const username = req.user.username;
 
-    const categories = req.body.category;
-
-    console.log(categories)
-
     if (buttonPressed == "create") {
 
         // host game and direct to game
