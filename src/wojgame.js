@@ -58,18 +58,29 @@ const shuffle = (array) => {
 }
 
 const getSingleQuestion = (index, questions) => {
-   var information = questions.results[index]
-   var question = unescape(information.question);
-   var correctAnswer = unescape(information.correct_answer);
-   var answers = information.incorrect_answers;
-   answers.push(correctAnswer);
+  var question = "Game over!";
+  var answerA = "Game over!";
+  var answerB = "Game over!";
+  var answerC = "Game over!";
+  var answerD = "Game Over!"
+  var correctAnswer = "";
 
-   answers = shuffle(answers);
+  var information = questions.results[index];
+  if(information !== undefined) {
+    var question = unescape(information.question);
+    var correctAnswer = unescape(information.correct_answer);
+    var answers = information.incorrect_answers;
+    answers.push(correctAnswer);
 
-   const answerA = unescape(answers[0]);
-   const answerB = unescape(answers[1]);
-   const answerC = unescape(answers[2]);
-   const answerD = unescape(answers[3]);
+    answers = shuffle(answers);
+
+    answerA = unescape(answers[0]);
+    answerB = unescape(answers[1]);
+    answerC = unescape(answers[2]);
+    answerD = unescape(answers[3]);
+
+    questions.results.splice(index, 1);
+  }
 
    return {question, answerA, answerB, answerC, answerD, correctAnswer};
 }
