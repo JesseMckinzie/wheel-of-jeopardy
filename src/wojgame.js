@@ -14,6 +14,9 @@ const questions = {"response_code":0,"results":[{"category":"History","type":"mu
 var gameInit = false; // has the game been created yet?
 var gameInfo;
 var playersBuzzedTime = [];
+var playerScores = [0,0,0];
+var currentScore = 0;
+var currentPoint = 0;
 
 const apiReqBuilder = (gameLength) => {
   return 'https://opentdb.com/api.php?amount='.concat(gameLength, '&encode=url3986');
@@ -134,6 +137,7 @@ const getSingleQuestion = (index, questions) => {
     io.emit('sendQuestion', chosenQ);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" has chosen a point value of ", data.qVal)});
+    currentPoint = data.qVal;
     //io.emit('update-room-info', players);
   });
   // SERVER: Times everyone buzzing in
@@ -156,10 +160,12 @@ const getSingleQuestion = (index, questions) => {
         if (item.username == winner.username) {
           players[index].currentPlayer = true;
           currentPlayer = players[index].playerRole;
+          currentScore = playerScores[currentPlayer];
         } else {
           players[index].currentPlayer = false;
         }
       });
+      
       io.emit('decideWhoBuzzedFirst', players);
       // Notify everyone in the room of the person who buzzed in first
       io.emit('chat-message-bounce', {username: "System", msg: winner.username.concat(" is the person who buzzed in first!")});
@@ -174,11 +180,18 @@ const getSingleQuestion = (index, questions) => {
     msg = "The correct answer was ".concat(correctChoice, ".");
     io.emit('chat-message-bounce', {username: "System", msg: msg});
     if (ansChoice == correctChoice) {
-      msg = data.username.concat(" got points.");
+      msg = data.username.concat(" got ") + currentPoint + (" points.");
+      currentScore = Number(currentScore) + Number(currentPoint);
+      io.emit('chat-message-bounce', {username: "System", msg: msg});
+      msg = data.username.concat(" has ") + currentScore + " total points";
     } else {
-      msg = data.username.concat(" lost points."); 
+      msg = data.username.concat(" lost ") + currentPoint + (" points.");
+      currentScore = Number(currentScore) - Number(currentPoint);
+      io.emit('chat-message-bounce', {username: "System", msg: msg});
+      msg = data.username.concat(" has ") + currentScore + " total points"; 
     }
-    // Need to update the player's score
+    
+    playerScores[currentPlayer] = currentScore;  //update current player's score
     // Notify users of the current player's answer choice, and if they won or lost
     io.emit('chat-message-bounce', {username: "System", msg: msg});
     io.emit('reset-wheel');
