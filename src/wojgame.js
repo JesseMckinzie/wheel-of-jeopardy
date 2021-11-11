@@ -180,8 +180,12 @@ const getSingleQuestion = (index, questions) => {
       };
     }); */
     chosenQ = getSingleQuestion(Math.floor(Math.random()*questions.results.length), questions);
-    gameInfo.chosenQ = chosenQ;
-    io.emit('sendQuestion', chosenQ);
+    // Delay 3 seconds before sending question
+    function sendQuestionDelay() {
+      gameInfo.chosenQ = chosenQ;
+      io.emit('sendQuestion', chosenQ);
+    }
+    setTimeout(sendQuestionDelay, 3000);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" has chosen a point value of ", data.qVal)});
     currentPoint = data.qVal;
