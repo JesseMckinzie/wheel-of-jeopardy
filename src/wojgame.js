@@ -272,6 +272,7 @@ const getSingleQuestion = (index, questions) => {
   });
   
   gameSocket.on('submit-answer', (data) => {
+    io.emit('chat-message-bounce', {username:"System", msg: "I'm getting here"});
     ansChoice = data.choice.split(' ').slice(1).join(' ');
     correctChoice = gameInfo.chosenQ.correctAnswer;
     msg = `${data.username} picked answer choice ${ansChoice}.`;
