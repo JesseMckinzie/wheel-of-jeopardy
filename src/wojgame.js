@@ -229,6 +229,8 @@ const getSingleQuestion = (index, questions) => {
       msg = "The correct answer was ".concat(correctChoice, ".");
       io.emit('chat-message-bounce', {username: "System", msg: msg});
       io.emit('reset-wheel');
+      console.log(players);
+      io.emit('decideWhoBuzzedFirst', players);
     }
     
     setTimeout(sendQuestionDelay, 3000);
