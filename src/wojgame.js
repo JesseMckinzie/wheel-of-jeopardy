@@ -212,21 +212,36 @@ const getSingleQuestion = (index, questions) => {
       };
     }); */
     chosenQ = getSingleQuestion(Math.floor(Math.random()*questions.results.length), questions);
+    
     // Delay 3 seconds before sending question
     function sendQuestionDelay() {
       gameInfo.chosenQ = chosenQ;
       io.emit('sendQuestion', chosenQ);
     }
+    
+    // Delay 5 seconds before buzz-in
+    
+    function displayQuestionTimer() {
+      io.emit('chat-message-bounce', {username: "System", msg: "No players have buzzed in. Time's up!"});
+      correctChoice = gameInfo.chosenQ.correctAnswer;
+      msg = "The correct answer was ".concat(correctChoice, ".");
+      io.emit('chat-message-bounce', {username: "System", msg: msg});
+      io.emit('reset-wheel');
+    }
+    
     setTimeout(sendQuestionDelay, 3000);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
+    displayTime = setTimeout(displayQuestionTimer, 5000);
   });
 
   // SERVER: Times everyone buzzing in
   gameSocket.on('buzzed-in', (data) => {
     playersBuzzedTime.push(data);
+    // reset question timeout after buzz-in
+    clearTimeout(displayTime);
     if (playersBuzzedTime.length == numOfActivePlayers) {
       let winnerTime = Number.MAX_VALUE;
       playersBuzzedTime.forEach(function (item, index) {
