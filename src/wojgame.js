@@ -27,6 +27,8 @@ var playerScores = [0,0,0];
 var currentScore = 0;
 var currentPoint = 0;
 var questionsReaming = -1;
+var gameStarted = false;
+const requiredNumPlayers = 3;
 
 const apiReqBuilder = (amount, id) => {
   // return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
@@ -183,6 +185,14 @@ const getSingleQuestion = (index, questions) => {
     console.log(players);
     // Notify everyone in the room that a user just joined
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just joined the game.`});
+    // Can we start the game?
+    if (numOfActivePlayers == requiredNumPlayers) {
+      gameStarted = true;
+      io.emit('game-started');
+      io.emit('chat-message-bounce', {username: "System", msg: `The game has started.`});
+    } else {
+      io.emit('chat-message-bounce', {username: "System", msg: `Waiting for more players before starting the game.`});
+    };
   });
 
   // SERVER: Sends a client chat message to all clients
@@ -361,6 +371,7 @@ const getSingleQuestion = (index, questions) => {
         currentScore = 0;
         currentPoint = 0;
         questionsReaming = -1;
+        gameStarted = false;
       };
     };
   });  

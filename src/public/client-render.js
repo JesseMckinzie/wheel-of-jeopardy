@@ -89,6 +89,10 @@ jQuery(function($){
             IO.socket.on('remove-player', (data) => {
                 App.removePlayer(data);
             });
+            // CLIENT: Start the game when there are 3 players
+            IO.socket.on('game-started', () => {
+                App.gameStarted = true;
+            });            
             // CLIENT: Render points won or lost animation
             /* IO.socket.on('play-pts-anim', (data) => {
                 if (data.status == "won") {
@@ -110,6 +114,7 @@ jQuery(function($){
         currentPlayer: false,
         questionDisplayed: false,
         timeQuestionDisplayed: new Date().getTime(),
+        gameStarted: false,
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -207,10 +212,12 @@ jQuery(function($){
         onSpinBtn: function() {
             // reset got and lost points animations
             // $("img").remove(".video");
-            if (App.currentPlayer) {
-                IO.socket.emit('spin', {username: App.myUsername});
-            }
-            App.questionDisplayed = false;
+            if (App.gameStarted) {
+                if (App.currentPlayer) {
+                    IO.socket.emit('spin', {username: App.myUsername});
+                }
+                App.questionDisplayed = false;
+            };
         },
 
         /**
@@ -218,32 +225,36 @@ jQuery(function($){
          * @param data{String}
          */          
         getQuestionCategory: function(data) {
-            $("#wheel-img").one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend animationend',   
-            function(e) {
-                //$("#wheel-img").css("animation", "");
-            });
-            if (App.currentPlayer) {
-                $('#game-area').html($('#wheel-template').html());
-                $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
-            } else {
-                // render a different screen for a person who is not the current player
-                $('#game-area').html($('#wheel-template-alt').html());
-                $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
+            if (App.gameStarted) {
+                $("#wheel-img").one('webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend animationend',   
+                function(e) {
+                    //$("#wheel-img").css("animation", "");
+                });
+                if (App.currentPlayer) {
+                    $('#game-area').html($('#wheel-template').html());
+                    $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
+                } else {
+                    // render a different screen for a person who is not the current player
+                    $('#game-area').html($('#wheel-template-alt').html());
+                    $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
+                };
+                // $('#question-cat').append('<p/>').text(data.chosen_q);
             };
-            // $('#question-cat').append('<p/>').text(data.chosen_q);
         },
 
         /**
          * Notifies the server that a user chose a question value.
          */         
         onChooseQuestionVal: function() {
-            App.startTimer(3, $('#timer'));
-            if (App.currentPlayer) {
-                var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
-                if (qVal) {
-                    IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
-                    $('#q-val-input').val() = '';
-                }
+            if (App.gameStarted) {
+                App.startTimer(3, $('#timer'));
+                if (App.currentPlayer) {
+                    var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
+                    if (qVal) {
+                        IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
+                        $('#q-val-input').val() = '';
+                    }
+                };
             };
         },
 
@@ -252,60 +263,66 @@ jQuery(function($){
          * @param {Array.<{question: String, answerA: String, answerB: String, answerC: String, answerD: String, correctAnswer: String}>} data
          */         
         getQuestion: function(data) {
-            $('#game-area').html($('#question-template').html());
-            $('#question').append('<p/>').text(data.question);
-            $('#answer_a').text('a)'.concat(' ', data.answerA));
-            $('#answer_b').text('b)'.concat(' ', data.answerB));
-            $('#answer_c').text('c)'.concat(' ', data.answerC));
-            $('#answer_d').text('d)'.concat(' ', data.answerD));
-            // Set the time that the question displayed
-            App.timeQuestionDisplayed = new Date().getTime();
-            App.questionDisplayed = true;
-            // No one is the current player until someone buzzes in
-            App.currentPlayer = false;
-            $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
-            $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
-            $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
-            App.startTimer(5, $('#timer'));
+            if (App.gameStarted) {
+                $('#game-area').html($('#question-template').html());
+                $('#question').append('<p/>').text(data.question);
+                $('#answer_a').text('a)'.concat(' ', data.answerA));
+                $('#answer_b').text('b)'.concat(' ', data.answerB));
+                $('#answer_c').text('c)'.concat(' ', data.answerC));
+                $('#answer_d').text('d)'.concat(' ', data.answerD));
+                // Set the time that the question displayed
+                App.timeQuestionDisplayed = new Date().getTime();
+                App.questionDisplayed = true;
+                // No one is the current player until someone buzzes in
+                App.currentPlayer = false;
+                $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
+                $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
+                $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
+                App.startTimer(5, $('#timer'));
+            };
         },
 
         endGame: function(data){
-            $('#game-area').html($('#game-over-template').html());
-            $('#message').append('<p/>').text(data.message);
-            $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
-            // Set the time that the question displayed
-            App.timeQuestionDisplayed = new Date().getTime();
-            App.questionDisplayed = true;
-            // No one is the current player until someone buzzes in
-            App.currentPlayer = false;
+            if (App.gameStarted) {
+                $('#game-area').html($('#game-over-template').html());
+                $('#message').append('<p/>').text(data.message);
+                $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
+                // Set the time that the question displayed
+                App.timeQuestionDisplayed = new Date().getTime();
+                App.questionDisplayed = true;
+                // No one is the current player until someone buzzes in
+                App.currentPlayer = false;
+            };
         },
 
         onBuzzIn: function() {
-            // You can only buzz in if a question has been displayed
-            if (App.questionDisplayed) {
-                let time = new Date().getTime();
-                // Submit the time you buzzed in minus the time the question was first displayed
-                IO.socket.emit('buzzed-in', {time: time - App.timeQuestionDisplayed, username: App.myUsername});
-            }
+            if (App.gameStarted) {
+                // You can only buzz in if a question has been displayed
+                if (App.questionDisplayed) {
+                    let time = new Date().getTime();
+                    // Submit the time you buzzed in minus the time the question was first displayed
+                    IO.socket.emit('buzzed-in', {time: time - App.timeQuestionDisplayed, username: App.myUsername});
+                }
+            };
         },
 
         onChooseA: function() {
-            if (App.currentPlayer && App.questionDisplayed) {
+            if (App.currentPlayer && App.questionDisplayed && App.gameStarted) {
                 IO.socket.emit('submit-answer', {choice: $('#answer_a').text(), username: App.myUsername});
             };
         },
         onChooseB: function() {
-            if (App.currentPlayer && App.questionDisplayed) {
+            if (App.currentPlayer && App.questionDisplayed && App.gameStarted) {
                 IO.socket.emit('submit-answer', {choice: $('#answer_b').text(), username: App.myUsername});
             };
         },
         onChooseC: function() {
-            if (App.currentPlayer && App.questionDisplayed) {
+            if (App.currentPlayer && App.questionDisplayed && App.gameStarted) {
                 IO.socket.emit('submit-answer', {choice: $('#answer_c').text(), username: App.myUsername});
             };
         },
         onChooseD: function() {
-            if (App.currentPlayer && App.questionDisplayed) {
+            if (App.currentPlayer && App.questionDisplayed && App.gameStarted) {
                 IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
             };
         },
