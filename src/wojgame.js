@@ -29,7 +29,8 @@ var currentPoint = 0;
 var questionsReaming = -1;
 
 const apiReqBuilder = (amount, id) => {
-  return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
+  // return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
+  return `https://opentdb.com/api.php?amount=${amount}&type=multiple&encode=url3986`;
 }
 /*
 const questionsBuilder = () => {
