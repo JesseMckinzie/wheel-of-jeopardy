@@ -85,10 +85,10 @@ jQuery(function($){
             IO.socket.on('update-scores', (data) => {
                 App.updateScores(data);
             });   
-            
-            IO.socket.on('game-end', (data) => {
-                App.endGame(data);
-            });
+            // CLIENT: Remove player from screen
+            IO.socket.on('remove-player', (data) => {
+                App.removePlayer(data);
+            });            
         }
     };
 
@@ -125,10 +125,6 @@ jQuery(function($){
             App.$doc.on('click', '#submit-ans-b', App.onChooseB);
             App.$doc.on('click', '#submit-ans-c', App.onChooseC);
             App.$doc.on('click', '#submit-ans-d', App.onChooseD);
-
-            // Logout and back 
-            App.$doc.on('click', '#back-button', App.onExit);
-            App.$doc.on('click', '#log-out-button', App.onExit);
 
             // Prevent enter button from refreshing page
             App.$doc.on('keyup keypress', function(e) {
@@ -231,13 +227,14 @@ jQuery(function($){
          * Notifies the server that a user chose a question value.
          */         
         onChooseQuestionVal: function() {
+            App.startTimer(3, $('#timer'));
             if (App.currentPlayer) {
                 var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                 if (qVal) {
                     IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
                     $('#q-val-input').val() = '';
                 }
-            };          
+            };
         },
 
         /**
@@ -259,6 +256,7 @@ jQuery(function($){
             $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
             $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
             $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
+            App.startTimer(5, $('#timer'));
         },
 
         endGame: function(data){
@@ -301,9 +299,34 @@ jQuery(function($){
                 IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
             };
         },
+
+        removePlayer: function(data) {
+            for (let i = 0; i < 3; i++) {
+                if ($('#player-'.concat(i)).text() == data.username) {
+                    $('#player-'.concat(i)).text('');
+                    $('#score-'.concat(i)).text('');
+                    $('#cur-player-'.concat(i)).replaceWith( "<p id='cur-player-".concat(i, "'hidden>c u r r e n t  p l a y e r</p>"));
+                    break;
+                };
+            };            
+        },
+
+        // Timer display function credit to robbmj. https://stackoverflow.com/questions/20618355/how-to-write-a-countdown-timer-in-javascript
+        startTimer: function(duration, display) {
+            var timer = duration, minutes, seconds;
+            var refreshIntervalId = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
         
-        onExit: function() {
-            IO.socket.emit('player-exit', {username: App.myUsername});
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+        
+                display.text(minutes + ":" + seconds);
+        
+                if (--timer < 0) {
+                    clearInterval(refreshIntervalId);
+                }
+            }, 1000);
         },
     };
 

@@ -120,9 +120,11 @@ body {
 
 #timer {
   border: 2px solid black;
+  font-size: 40px;
   text-align: center;
   position: fixed;
-  top: 0;
+  top: 5%;
+  left: 10%;
 }
 .other-players {
   background: white; 

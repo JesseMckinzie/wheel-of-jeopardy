@@ -323,15 +323,26 @@ const getSingleQuestion = (index, questions) => {
       // Purge player from players
       players.forEach(function (item, index) {
         if (item.socketid == socket.id) {
+          numOfActivePlayers = numOfActivePlayers - 1;
+          // if the player who logged out is the current player, transfer current player status
+          if (players[index].currentPlayer) {
+            if (numOfActivePlayers > 0) {
+              // if there are more players in the room, transfer ownership to the next player
+              players[(index + 1) % players.length].currentPlayer = true;
+              currentPlayer = players[(index + 1) % players.length].playerRole;
+              io.emit('decideWhoBuzzedFirst', players);
+            };
+          };
           players.splice(index, 1);
           loggedOutPlayer = item.username;
+          io.emit('remove-player', {username: loggedOutPlayer});
         };
       });
       console.log(players);
-      numOfActivePlayers = numOfActivePlayers - 1;
       io.emit('chat-message-bounce', {username: "System", msg: `${loggedOutPlayer} just left the game.`});
       // flush all game variables
       if (players.length < 1) {
+        numOfActivePlayers = 0;
         currentPlayer = 0;
         curRound = 0;
         var questions;
@@ -342,7 +353,7 @@ const getSingleQuestion = (index, questions) => {
         currentScore = 0;
         currentPoint = 0;
         questionsReaming = -1;
-      }
+      };
     };
   });  
   
