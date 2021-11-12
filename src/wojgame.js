@@ -29,12 +29,13 @@ const apiReqBuilder = (amount, id) => {
   return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
 }
 
-const questionsBuilder = (gameLength, categories) => {
-  var response = [];
+const questionsBuilder = () => {
+  var questions = [];
   const questionNum = floor(gameLength/5);
   for(const category in categories){
-    response.push(await axios(apiReqBuilder(questionNum, category.id)))
+    response.push((await axios(apiReqBuilder(questionNum, category.id))).data)
   }
+  return questions;
 }
 
 const getQuestions = async(gameLength) => {
