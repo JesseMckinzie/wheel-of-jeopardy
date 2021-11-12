@@ -20,7 +20,7 @@ var currentPoint = 0;
 var questionsReaming = -1;
 
 const apiReqBuilder = (gameLength) => {
-  return 'https://opentdb.com/api.php?amount='.concat(gameLength, '&type=multiple&encode=url3986');
+  return `https://opentdb.com/api.php?amount=${gameLength}&type=multiple&encode=url3986`;
 }
 
 const getQuestions = async(gameLength) => {
@@ -126,14 +126,19 @@ const getSingleQuestion = (index, questions) => {
       }
       awaitQuestions();
       // Notify everyone in the room that the game has been created
-      io.emit('chat-message-bounce', {username: "System", msg: "The game is initialized with ".concat(data.gameLength, " questions. The room's ID is ", data.gameId,
-      " and the passcode is ", data.passcode, ".")});
+      io.emit('chat-message-bounce', {
+        username: "System", 
+        msg: `The game is initialized with ${data.gameLength} questions. 
+        The room's ID is ${data.gameId} and the passcode is ${data.passcode}.`
+      });
     }
-  });  
+  }); 
+   
   // SERVER: Updates all clients' rooms
   gameSocket.on('update-room-info', () => {
     io.emit('update-room-info', players);
   });
+
   // SERVER: Saves a username and socket ID combination
   gameSocket.on('save-user-and-socket-id', (data) => {
     var found = false;
@@ -157,22 +162,25 @@ const getSingleQuestion = (index, questions) => {
     };
     console.log(players);
     // Notify everyone in the room that a user just joined
-    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" just joined the game.")});
+    io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just joined the game.`});
   });
+
   // SERVER: Sends a client chat message to all clients
   gameSocket.on('chat-message', (data) => {
     io.emit('chat-message-bounce', data);
   });
+
   // SERVER: Return the chosen question category after a wheel spin
   gameSocket.on('spin', (data) => {
     chosenInd = Math.floor(Math.random()*gameCategories.length);
     chosenQCat = gameCategories[chosenInd];
     io.emit('getQuestionCategory', {chosen_q : chosenQCat, chosen_q_spin_val : gameCategoriesSpinValues[chosenInd]});
     // Notify everyone in the room that a user spun the wheel
-    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" just spun the wheel.")});
+    io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just spun the wheel.`});
     // Notify everyone in the room of the current question category
-    io.emit('chat-message-bounce', {username: "System", msg: "The current question category is ".concat(chosenQCat)});
+    io.emit('chat-message-bounce', {username: "System", msg: `The current question category is ${chosenQCat}`});
   });
+
   // SERVER: Return a question corresponding to the requested point value
   gameSocket.on('choose-q-value', (data) => {
     // Update current player
@@ -193,10 +201,11 @@ const getSingleQuestion = (index, questions) => {
     }
     setTimeout(sendQuestionDelay, 3000);
     // Notify everyone in the room of the chosen question point value
-    io.emit('chat-message-bounce', {username: "System", msg: data.username.concat(" has chosen a point value of ", data.qVal)});
+    io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
   });
+
   // SERVER: Times everyone buzzing in
   gameSocket.on('buzzed-in', (data) => {
     playersBuzzedTime.push(data);
@@ -225,27 +234,27 @@ const getSingleQuestion = (index, questions) => {
       
       io.emit('decideWhoBuzzedFirst', players);
       // Notify everyone in the room of the person who buzzed in first
-      io.emit('chat-message-bounce', {username: "System", msg: winner.username.concat(" is the person who buzzed in first!")});
+      io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} is the person who buzzed in first!`});
     };
   });
   
   gameSocket.on('submit-answer', (data) => {
     ansChoice = data.choice.split(' ').slice(1).join(' ');
     correctChoice = gameInfo.chosenQ.correctAnswer;
-    msg = data.username.concat(" picked answer choice ", ansChoice, ".");
+    msg = `${data.username} picked answer choice ${ansChoice}.`;
     io.emit('chat-message-bounce', {username: "System", msg: msg});
-    msg = "The correct answer was ".concat(correctChoice, ".");
+    msg = `The correct answer was ${correctChoice}.`;
     io.emit('chat-message-bounce', {username: "System", msg: msg});
     if (ansChoice == correctChoice) {
-      msg = data.username.concat(" got ") + currentPoint + (" points.");
+      msg = `${data.username} got ${currentPoint} points.`;
       currentScore = Number(currentScore) + Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
-      msg = data.username.concat(" has ") + currentScore + " total points";
+      msg = `${data.username} has ${currentScore} total points`;
     } else {
-      msg = data.username.concat(" lost ") + currentPoint + (" points.");
+      msg = `${data.username} lost ${currentPoint} points.`;
       currentScore = Number(currentScore) - Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
-      msg = data.username.concat(" has ") + currentScore + " total points"; 
+      msg = `${data.username} has ${currentScore} total points`; 
     }
     
     playerScores[currentPlayer] = currentScore;  //update current player's score
@@ -258,12 +267,12 @@ const getSingleQuestion = (index, questions) => {
     // Notify users of the current player's answer choice, and if they won or lost
     io.emit('chat-message-bounce', {username: "System", msg: msg});
     io.emit('update-scores', [{username: data.username, score: currentScore}]);
-    io.emit('chat-message-bounce', {username: "System", msg: "There are ".concat(questionsReaming, " questions remaining.")});
+    io.emit('chat-message-bounce', {username: "System", msg: `There are ${questionsReaming} questions remaining.`});
     if(questionsReaming === 0){
       const winner = {}
       winner.winner = players[getWinnerIdx(playerScores)].username;
       winner.message = "Game over!"
-      io.emit('chat-message-bounce', {username: "System", msg: "The winner is ".concat(winner.winner, "!")});
+      io.emit('chat-message-bounce', {username: "System", msg: `The winner is ${winner.winner}!`});
       io.emit('game-end', winner)
     } else {
       io.emit('reset-wheel');
