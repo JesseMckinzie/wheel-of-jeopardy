@@ -31,8 +31,13 @@ const getQuestions = async(gameLength) => {
 }
 
 const getWinnerIdx = (array) =>{
-  if(array.length === 1) return 0;
-  else return array.indexOf(Math.max(...array));
+  var max = -Number.MAX_VALUE;
+  var maxIdx = 0;
+
+  for(var i = 0; i < players.length; ++i){
+    if(playerScores[i] > max) maxIdx = i;
+  }
+  return maxIdx;
 }
 
 /*
@@ -256,9 +261,6 @@ const getSingleQuestion = (index, questions) => {
     io.emit('chat-message-bounce', {username: "System", msg: "There are ".concat(questionsReaming, " questions remaining.")});
     if(questionsReaming === 0){
       const winner = getWinnerIdx(playerScores);
-      console.log("-------------")
-      console.log(winner)
-      console.log("-------------")
       io.emit('chat-message-bounce', {username: "System", msg: "The winner is ".concat(players[winner].username, "!")});
     }
     io.emit('reset-wheel');
