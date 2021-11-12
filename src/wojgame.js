@@ -31,7 +31,7 @@ var questionsReaming = -1;
 const apiReqBuilder = (amount, id) => {
   return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
 }
-
+/*
 const questionsBuilder = () => {
   var questions = [];
   const questionNum = floor(gameLength/5);
@@ -40,7 +40,7 @@ const questionsBuilder = () => {
   }
   return questions;
 }
-
+*/
 const getQuestions = async(gameLength) => {
   let response = await axios(apiReqBuilder(gameLength));
   let questions = response.data;
