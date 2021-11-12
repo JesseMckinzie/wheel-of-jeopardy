@@ -234,7 +234,7 @@ const getSingleQuestion = (index, questions) => {
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
-    displayTime = setTimeout(displayQuestionTimer, 5000);
+    displayTime = setTimeout(displayQuestionTimer, 8000);
   });
 
   // SERVER: Times everyone buzzing in
