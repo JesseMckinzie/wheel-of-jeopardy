@@ -84,7 +84,11 @@ jQuery(function($){
             // CLIENT: Update scores
             IO.socket.on('update-scores', (data) => {
                 App.updateScores(data);
-            });                         
+            });   
+            
+            IO.socket.on('game-end', (data) => {
+                App.endGame(data);
+            });
         }
     };
 
@@ -251,6 +255,17 @@ jQuery(function($){
             $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
             $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
             $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
+        },
+
+        endGame: function(data){
+            $('#game-area').html($('#game-over-template').html());
+            $('#message').append('<p/>').text(data.message);
+            $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
+            // Set the time that the question displayed
+            App.timeQuestionDisplayed = new Date().getTime();
+            App.questionDisplayed = true;
+            // No one is the current player until someone buzzes in
+            App.currentPlayer = false;
         },
 
         onBuzzIn: function() {

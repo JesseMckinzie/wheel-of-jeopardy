@@ -260,10 +260,14 @@ const getSingleQuestion = (index, questions) => {
     io.emit('update-scores', [{username: data.username, score: currentScore}]);
     io.emit('chat-message-bounce', {username: "System", msg: "There are ".concat(questionsReaming, " questions remaining.")});
     if(questionsReaming === 0){
-      const winner = getWinnerIdx(playerScores);
-      io.emit('chat-message-bounce', {username: "System", msg: "The winner is ".concat(players[winner].username, "!")});
+      const winner = {}
+      winner.winner = players[getWinnerIdx(playerScores)].username;
+      winner.message = "Game over!"
+      io.emit('chat-message-bounce', {username: "System", msg: "The winner is ".concat(winner.winner, "!")});
+      io.emit('game-end', winner)
+    } else {
+      io.emit('reset-wheel');
     }
-    io.emit('reset-wheel');
   });
   
   // Host Events
