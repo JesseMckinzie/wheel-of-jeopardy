@@ -20,7 +20,7 @@ var currentPoint = 0;
 var questionsReaming = -1;
 
 const apiReqBuilder = (gameLength) => {
-  return 'https://opentdb.com/api.php?amount='.concat(gameLength, '&encode=url3986');
+  return 'https://opentdb.com/api.php?amount='.concat(gameLength, '&type=multiple&encode=url3986');
 }
 
 const getQuestions = async(gameLength) => {
