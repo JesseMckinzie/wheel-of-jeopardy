@@ -249,6 +249,13 @@ body {
   animation-fill-mode: forwards;
 }
 
+.question-container {
+  background: white;
+  background-color: #e8e8d8;
+  width: 50%;
+  font-size: 20px;
+}
+
 button.close-button {
   position: absolute;
   top: 2px;
@@ -270,10 +277,22 @@ button.close-button {
   line-height: 30px;
   background-image: -webkit-linear-gradient(top, #602ba4, #c574ed);
   background-image: -webkit-linear-gradient(left, #0050e0, #3890f8);
+  padding-left: 2px;
 }
 
-.question-container {
-  background: white;
-  border: 2px solid black;
+#video-lost-pts {
+  height: 150px;
+  width: 150px;
+  position: absolute;
+  bottom: 20%;
+  right: 10%;
 }
 
+#video-got-pts {
+  height: 650px;
+  width: 1300px;
+  z-index: 10;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}

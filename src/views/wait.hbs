@@ -111,7 +111,7 @@
   <script id="init-wheel-template" type="text/template">
     <div class="wheel-container">
       <img id="wheel-img" src="/img/wheel.svg" alt="current-profile-pic">
-      <div id="triangle"></div>
+      <div id="triangle"></div>      
     </div>
   </script>
 
@@ -160,6 +160,10 @@
 
   <script id="question-template" type="text/template">
     <div class="question-container">
+        <div class="title">
+          Choose a point value
+          <button type="button" class="close-button">X</button>
+        </div>
       <p id="question"></p>
       <label id="answer_a" for="answer_a">a )  {{answerA}}</label><br>
       <label id="answer_b" for="answer_b">b )  {{answerB}}</label><br>

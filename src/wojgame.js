@@ -150,6 +150,7 @@ const getSingleQuestion = (index, questions) => {
         msg: `The game is initialized with ${data.gameLength} questions. 
         The room's ID is ${data.gameId} and the passcode is ${data.passcode}.`
       });
+      io.emit('chat-message-bounce', {username: "System", msg: `The game is currently in Round ${curRound}.`});
     }
   }); 
    
@@ -273,6 +274,7 @@ const getSingleQuestion = (index, questions) => {
   });
   
   gameSocket.on('submit-answer', (data) => {
+    let answerStatus = "";
     io.emit('chat-message-bounce', {username:"System", msg: "I'm getting here"});
     ansChoice = data.choice.split(' ').slice(1).join(' ');
     correctChoice = gameInfo.chosenQ.correctAnswer;
@@ -285,11 +287,13 @@ const getSingleQuestion = (index, questions) => {
       currentScore = Number(currentScore) + Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
       msg = `${data.username} has ${currentScore} total points`;
+      // answerStatus = "won";
     } else {
       msg = `${data.username} lost ${currentPoint} points.`;
       currentScore = Number(currentScore) - Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
       msg = `${data.username} has ${currentScore} total points`; 
+      // answerStatus = "lost";
     }
     
     playerScores[currentPlayer] = currentScore;  //update current player's score
@@ -311,7 +315,9 @@ const getSingleQuestion = (index, questions) => {
       io.emit('game-end', winner)
     } else {
       io.emit('reset-wheel');
+      // io.emit('play-pts-anim', {status: answerStatus});
     }
+    io.emit('chat-message-bounce', {username: "System", msg: `The game is currently in Round ${++curRound}.`});
   });
 
   // A player logs out

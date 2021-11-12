@@ -88,7 +88,15 @@ jQuery(function($){
             // CLIENT: Remove player from screen
             IO.socket.on('remove-player', (data) => {
                 App.removePlayer(data);
-            });            
+            });
+            // CLIENT: Render points won or lost animation
+            /* IO.socket.on('play-pts-anim', (data) => {
+                if (data.status == "won") {
+                    $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/no-scope-low-res.gif" alt="current-profile-pic">');
+                } else if (data.status == "lost") {
+                    $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/thanos.gif" alt="current-profile-pic">');
+                };
+            }); */                        
         }
     };
 
@@ -197,6 +205,8 @@ jQuery(function($){
          * Notifies the server that a user spun the wheel.
          */        
         onSpinBtn: function() {
+            // reset got and lost points animations
+            // $("img").remove(".video");
             if (App.currentPlayer) {
                 IO.socket.emit('spin', {username: App.myUsername});
             }
