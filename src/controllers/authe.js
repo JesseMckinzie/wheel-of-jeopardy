@@ -41,29 +41,20 @@ router.get('/wait', async(req, res) => {
 
 /* POST signup page. */
 router.post(`/register`, (req, res) => {
-    var buttonPressed = req.body.button;
     // console.log(buttonPressed);
-    if (buttonPressed == "create") {
-        User.create(req.body)
-        .then((newUser) => {
-            const token = createToken(newUser.username, newUser.email);
-            console.log(token);
-            res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
-            res.redirect(`/lobby`);
-        })
-        .catch((err) => {
-            // res.send(`err ${err}`);
-            alert(err.errors[0].message);
-            res.render(`register`);
-            // res.redirect(`/register`);
-        });
-    } else if (buttonPressed == "back") {
-        // Go back to login
-        res.clearCookie("jwt");
-        res.redirect("/");
-    } else {
-        console.log("User did not press any buttons on the register page.");
-    }
+    User.create(req.body)
+    .then((newUser) => {
+        const token = createToken(newUser.username, newUser.email);
+        console.log(token);
+        res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
+        res.redirect(`/lobby`);
+    })
+    .catch((err) => {
+        // res.send(`err ${err}`);
+        alert(err.errors[0].message);
+        res.render(`register`);
+        // res.redirect(`/register`);
+    });
 });
 
 // SIGN OUT ROUTE
