@@ -126,6 +126,10 @@ jQuery(function($){
             App.$doc.on('click', '#submit-ans-c', App.onChooseC);
             App.$doc.on('click', '#submit-ans-d', App.onChooseD);
 
+            // Logout and back 
+            App.$doc.on('click', '#back-button', App.onExit);
+            App.$doc.on('click', '#log-out-button', App.onExit);
+
             // Prevent enter button from refreshing page
             App.$doc.on('keyup keypress', function(e) {
                 var keyCode = e.keyCode || e.which;
@@ -296,7 +300,11 @@ jQuery(function($){
             if (App.currentPlayer && App.questionDisplayed) {
                 IO.socket.emit('submit-answer', {choice: $('#answer_d').text(), username: App.myUsername});
             };
-        },                
+        },
+        
+        onExit: function() {
+            IO.socket.emit('player-exit', {username: App.myUsername});
+        },
     };
 
     IO.init();

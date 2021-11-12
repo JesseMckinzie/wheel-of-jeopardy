@@ -40,7 +40,7 @@ router.post(`/host_api`, (req, res) => {
     var gameId = gameIds[gameIds.length - 1];
     var passcode = req.body.passcode;
     var gameLength = req.body.game_length;
-    if (gameLength == "") { gameLength = 30;};
+    if (!gameLength) { gameLength = 30;};
     const username = req.user.username;
 
     if (buttonPressed == "create") {

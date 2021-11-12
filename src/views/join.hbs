@@ -34,15 +34,6 @@
         <p>&copy i m p o r t  t e a m N a m e  2 0 2 1</p>
       </div>
     </div>
-  </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-
-    document.getElementById("join-btn").addEventListener("click", function() {
-      socket.emit('playerJoinGame', {game_id: document.getElementById('game_id').value, passcode: document.getElementById('passcode').value, username: '{{username}}'});
-    });
-  </script>  
+  </div> 
 </body>
 </html>

@@ -312,6 +312,38 @@ const getSingleQuestion = (index, questions) => {
       io.emit('reset-wheel');
     }
   });
+
+  // A player logs out
+  gameSocket.on('disconnect', () => {
+    if (gameInit) {
+      console.log(gameSocket.id);
+      console.log("A client disconnected");
+      let loggedOutPlayer = "";
+      // Purge player from players
+      players.forEach(function (item, index) {
+        if (item.socketid == socket.id) {
+          players.splice(index, 1);
+          loggedOutPlayer = item.username;
+        };
+      });
+      console.log(players);
+      numOfActivePlayers = numOfActivePlayers - 1;
+      io.emit('chat-message-bounce', {username: "System", msg: `${loggedOutPlayer} just left the game.`});
+      // flush all game variables
+      if (players.length < 1) {
+        currentPlayer = 0;
+        curRound = 0;
+        var questions;
+        gameInit = false;
+        var gameInfo;
+        playersBuzzedTime = [];
+        playerScores = [0,0,0];
+        currentScore = 0;
+        currentPoint = 0;
+        questionsReaming = -1;
+      }
+    };
+  });  
   
   // Host Events
   gameSocket.on('hostCreateNewGame', (data) => {

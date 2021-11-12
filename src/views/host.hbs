@@ -38,15 +38,5 @@
       </div>
     </div>
   </div>
-
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    var socket = io();
-
-    document.getElementById("create-btn").addEventListener("click", function() {
-      socket.emit('hostCreateNewGame', {game_id: document.getElementById('game_id').placeholder, 
-      passcode: document.getElementById('passcode').value, game_length: document.getElementById('game_length').value, username: '{{username}}'});
-    });
-  </script>
 </body>
 </html>
