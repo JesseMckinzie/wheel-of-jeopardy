@@ -84,3 +84,5 @@ app.use(function(err, req, res, next) {
 server.listen(port, () => {
   // console.log("Nodemon listening");
 });
+
+module.exports = server;
