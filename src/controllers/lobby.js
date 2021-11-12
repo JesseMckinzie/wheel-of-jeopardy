@@ -11,27 +11,22 @@ var games = {}; // dictionary to hold all active game IDs and passcode
 /* GET lobby page. */
 router.get(`/`, (req, res) => {
     const username = req.user.username;
-
+    
     res.render('lobby', {username});
 });
 
 /* POST lobby page. */
-router.post(`/`, (req, res) => {
-    var buttonPressed = req.body.button;
+router.get(`/host`, (req, res) => {
     const username = req.user.username;
+    const thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
+    
+    gameIds.push(thisGameId);
+    res.render('host', {thisGameId, username});
+});
 
-    if (buttonPressed == "host") {
-        var thisGameId = gameIds[gameIds.length - 1] + 1; // unique game ID
-        gameIds.push(thisGameId);
-        res.render('host', {thisGameId, username});
-    } else if (buttonPressed == "join") {
-        // Go back
-        res.render('join', {username})
-    } else if (buttonPressed == "logout") {
-        res.redirect('/logout')
-    } else {
-        console.log("User did not press any buttons on the register page.");
-    }
+router.get(`/join`, (req, res) => {
+    const username = req.user.username;
+    res.render('join', {username})
 });
 
 /* POST host page. */

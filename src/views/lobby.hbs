@@ -13,20 +13,28 @@
       <div class="logo">
         <img src="/img/logo.gif" alt="logo">
       </div>
-      <form class="login" action="/lobby" method="POST">
+
+      <form class="login" action="/lobby/host">
         <div class="form-group">
           <p white-space="pre"> l o g g e d  i n  a s  {{username}}</p>
         </div>
         <div class="form-group">
           <button class="full-btn" name="button" value="host"> h o s t  g a m e</button>
         </div>
+      </form>
+
+      <form class="login" action="/lobby/join">
         <div class="form-group">
           <button class="full-btn" name="button" value="join"> j o i n  g a m e</button>
         </div>
+      </form>
+
+      <form class="login" action="/logout">
         <div class="form-group">
           <button class="full-btn" name="button" value="logout"> l o g  o u t</button>
         </div>
       </form>
+
       <div class="disclaimer">
         <p>&copy i m p o r t  t e a m N a m e  2 0 2 1</p>
       </div>
