@@ -326,6 +326,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
       io.emit('decideWhoBuzzedFirst', players);
       // Notify everyone in the room of the person who buzzed in first
       io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} is the person who buzzed in first!`});
+      io.emit('startTimerForQA');
     };
   });
   

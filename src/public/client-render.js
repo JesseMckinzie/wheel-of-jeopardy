@@ -77,6 +77,11 @@ jQuery(function($){
                 });
                 App.updatePlayerScreen(data);
             });     
+            // CLIENT: Start a 10-second timer for question & answer
+            IO.socket.on('startTimerForQA', () => {
+                clearInterval(App.refreshIntervalId);
+                App.startTimer(10, $('#timer'));
+            });            
             // CLIENT: Reset the wheel for the next round
             IO.socket.on('reset-wheel', () => {
                 $('#game-area').html(App.$initWheel);
@@ -119,6 +124,7 @@ jQuery(function($){
         questionDisplayed: false,
         timeQuestionDisplayed: new Date().getTime(),
         gameStarted: false,
+        refreshIntervalId: '',
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -359,6 +365,10 @@ jQuery(function($){
                     clearInterval(refreshIntervalId);
                 }
             }, 1000);
+            // grab interval id if duration is 5 seconds to clear it for the 10 second countdown
+            if (duration == 5) {
+                App.refreshIntervalId = refreshIntervalId;
+            }
         },
     };
 
