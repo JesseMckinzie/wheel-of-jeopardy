@@ -196,7 +196,7 @@ jQuery(function($){
             var msg = $('#chat-input').val();
             if (msg) {
                 IO.socket.emit('chat-message', {msg: msg, username: App.myUsername});
-                $('#chat-input').val() = '';
+                // $('#chat-input').val() = '';
             }
         },
 
@@ -257,7 +257,7 @@ jQuery(function($){
                     var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                     if (qVal) {
                         IO.socket.emit('choose-q-value', {qVal: qVal, username: App.myUsername});
-                        $('#q-val-input').val() = '';
+                        // $('#q-val-input').val() = '';
                     }
                 };
             };
