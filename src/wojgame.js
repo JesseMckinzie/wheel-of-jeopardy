@@ -297,7 +297,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
         }
       });
 
-       // Delay 5 seconds before answer submit
+       // Delay 10 seconds before answer submit
     
     function displaySubmitTimer() {
       io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} has not submitted an answer. Time's up!`});
@@ -321,7 +321,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
       io.emit('decideWhoBuzzedFirst', players);
     }
 
-      submitTime = setTimeout(displaySubmitTimer, 6000);
+      submitTime = setTimeout(displaySubmitTimer, 10000);
       
       io.emit('decideWhoBuzzedFirst', players);
       // Notify everyone in the room of the person who buzzed in first
