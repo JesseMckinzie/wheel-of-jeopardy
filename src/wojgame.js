@@ -69,12 +69,12 @@ const getWinnerIdx = (array) =>{
 
 const getQuestions = async(categoryIds) => {
   const responses = await Promise.all([
-    axios(apiReqBuilder(1, categoriesIds[0])), 
-    axios(apiReqBuilder(1, categoriesIds[1])),
-    axios(apiReqBuilder(1, categoriesIds[2])),
-    axios(apiReqBuilder(1, categoriesIds[3])),
-    axios(apiReqBuilder(1, categoriesIds[4])),
-    axios(apiReqBuilder(1, categoriesIds[5]))
+    axios(apiReqBuilder(5, categoryIds[0])), 
+    axios(apiReqBuilder(5, categoryIds[1])),
+    axios(apiReqBuilder(5, categoryIds[2])),
+    axios(apiReqBuilder(5, categoryIds[3])),
+    axios(apiReqBuilder(5, categoryIds[4])),
+    axios(apiReqBuilder(5, categoryIds[5]))
   ]);
 
   return responses;
@@ -125,8 +125,9 @@ const getSingleQuestion = (categoryIdx, questions) => {
     questions[categoryIdx].data.results.splice(0, 1);
     --questionsReaming;
     if(questions[categoryIdx].data.results.length === 0){ 
-      gameCategories.splice(categoryIdx,1)
+      gameCategories.splice(categoryIdx,1);
       questions.splice(categoryIdx, 1);
+      gameCategoriesSpinValues.splice(categoryIdx,1);
     }
   }
 
@@ -156,7 +157,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
       // get all the questions in the beginning and wait for api call to complete
       async function awaitQuestions() {
         let myPromise = new Promise(function(resolve) {
-          resolve(getQuestions(gameInfo.gameLength));
+          resolve(getQuestions(categoriesIds));
         });
         questions = await myPromise;
       }
