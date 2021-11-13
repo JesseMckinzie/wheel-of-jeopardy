@@ -69,21 +69,14 @@ const getWinnerIdx = (array) =>{
 
 const getQuestions = async(categoryIds) => {
   const responses = await Promise.all([
-    axios(apiReqBuilder(6, categoriesIds[0])), 
-    axios(apiReqBuilder(6, categoriesIds[1])),
-    axios(apiReqBuilder(6, categoriesIds[2])),
-    axios(apiReqBuilder(6, categoriesIds[3])),
-    axios(apiReqBuilder(6, categoriesIds[4])),
-    axios(apiReqBuilder(6, categoriesIds[5]))
+    axios(apiReqBuilder(1, categoriesIds[0])), 
+    axios(apiReqBuilder(1, categoriesIds[1])),
+    axios(apiReqBuilder(1, categoriesIds[2])),
+    axios(apiReqBuilder(1, categoriesIds[3])),
+    axios(apiReqBuilder(1, categoriesIds[4])),
+    axios(apiReqBuilder(1, categoriesIds[5]))
   ]);
-  /*
-  console.log(responses[0].data);
-  console.log(responses[1].data);
-  console.log(responses[2].data);
-  console.log(responses[3].data);
-  console.log(responses[4].data);
-  console.log(responses[5].data);
-  */
+
   return responses;
 }
 
@@ -108,14 +101,13 @@ const shuffle = (array) => {
 }
 
 const getSingleQuestion = (categoryIdx, questions) => {
-  console.log(categories[categoryIdx]);
-  var question = "Game over!";
-  var answerA = "Game over!";
-  var answerB = "Game over!";
-  var answerC = "Game over!";
-  var answerD = "Game Over!"
-  var correctAnswer = "";
-  console.log(questions[categoryIdx].data.results[0])
+  console.log(gameCategories[categoryIdx]);
+  var question = "Question not found.";
+  var answerA = "";
+  var answerB = "";
+  var answerC = "";
+  var answerD = ""
+  var correctAnswer = "no correct answer";
   const information = questions[categoryIdx].data.results[0];
   if(information !== undefined) {
     var question = unescape(information.question);
@@ -132,6 +124,10 @@ const getSingleQuestion = (categoryIdx, questions) => {
 
     questions[categoryIdx].data.results.splice(0, 1);
     --questionsReaming;
+    if(questions[categoryIdx].data.results.length === 0){ 
+      gameCategories.splice(categoryIdx,1)
+      questions.splice(categoryIdx, 1);
+    }
   }
 
    return {question, answerA, answerB, answerC, answerD, correctAnswer};
@@ -222,6 +218,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
 
   // SERVER: Return the chosen question category after a wheel spin
   gameSocket.on('spin', (data) => {
+    console.log(gameCategories)
     chosenInd = Math.floor(Math.random()*gameCategories.length);
     chosenQCat = gameCategories[chosenInd];
     io.emit('getQuestionCategory', {chosen_q : chosenQCat, chosen_q_spin_val : gameCategoriesSpinValues[chosenInd]});
