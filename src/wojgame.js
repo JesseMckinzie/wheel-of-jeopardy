@@ -392,6 +392,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
         currentPoint = 0;
         questionsReaming = -1;
         gameStarted = false;
+        avaiPlayerRoles = [0, 1, 2];
       };
     };
   });  

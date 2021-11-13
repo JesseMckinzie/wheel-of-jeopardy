@@ -57,17 +57,21 @@ router.post(`/host_api`, (req, res) => {
         })); */
 
         // Save gameId and corresponding passcode
-        games[gameId] = passcode;
-        console.log(games[gameId]);
-        res.redirect(url.format({
-            pathname:"/wait",
-            query: {
-               "username": username,
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength
-             }
-        }));
+        if (gameLength % 6 == 0) {
+            games[gameId] = passcode;
+            console.log(games[gameId]);
+            res.redirect(url.format({
+                pathname:"/wait",
+                query: {
+                   "username": username,
+                   "gameId": gameId,
+                   "passcode": passcode,
+                   "gameLength": gameLength
+                 }
+            }));
+        } else {
+            alert(`Game length must be a multiple of 6.`);
+        };
         // need a game creation method here
     } else if (buttonPressed == "join") {
         // join game and direct to game
