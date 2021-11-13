@@ -8,8 +8,8 @@ describe('User Endpoints', () => {
         const res = await request
         .post('/register')
         .send({username: 'test', email: 'test'})
-        .set('Accept', 'application/json');
-        // .expect(200);
+        .set('Accept', 'application/json')
+        .expect(302);
 
         // console.log(res)
     });
@@ -18,7 +18,8 @@ describe('User Endpoints', () => {
         const res = await request
         .post('/login')
         .send({username: 'test', email: 'test'})
-        .set('Accept', 'application/json');
+        .set('Accept', 'application/json')
+        .expect(302);
     });
 
     //Alternate
@@ -26,14 +27,16 @@ describe('User Endpoints', () => {
         const res = await request
         .post('/register')
         .send({username: 'test', email: 'test'})
-        .set('Accept', 'application/json');
+        .set('Accept', 'application/json')
+        .expect(200);
     });
   
     it('Incorrect Login', async () => {
         const res = await request
         .post('/login')
         .send({username: 'test', email: 'incorrect'})
-        .set('Accept', 'application/json');
+        .set('Accept', 'application/json')
+        .expect(302);
     });
 
 
