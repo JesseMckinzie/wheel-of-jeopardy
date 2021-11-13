@@ -93,6 +93,10 @@ jQuery(function($){
             IO.socket.on('game-started', () => {
                 App.gameStarted = true;
             });            
+
+            IO.socket.on('game-end', (data) => {
+                App.endGame(data);
+            });
             // CLIENT: Render points won or lost animation
             /* IO.socket.on('play-pts-anim', (data) => {
                 if (data.status == "won") {
@@ -233,6 +237,7 @@ jQuery(function($){
                 if (App.currentPlayer) {
                     $('#game-area').html($('#wheel-template').html());
                     $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
+                    console.log("data: " + data.chosen_q_spin_val);
                 } else {
                     // render a different screen for a person who is not the current player
                     $('#game-area').html($('#wheel-template-alt').html());
