@@ -30,77 +30,53 @@ router.get(`/join`, (req, res) => {
 });
 
 /* POST host page. */
-router.post(`/host_api`, (req, res) => {
-    var buttonPressed = req.body.button;
-    var gameId = gameIds[gameIds.length - 1];
-    var passcode = req.body.passcode;
-    var gameLength = req.body.game_length;
-    if (!gameLength) { gameLength = 30;};
+router.post(`/host`, (req, res) => {
     const username = req.user.username;
+    const gameId = gameIds[gameIds.length - 1];
+    const passcode = req.body.passcode;
+    const gameLength = req.body.game_length;
+    if (!gameLength) { gameLength = 30;};
 
-    if (buttonPressed == "create") {
+    // Save gameId and corresponding passcode
+    games[gameId] = passcode;
+    console.log(games[gameId]);
+    res.redirect(url.format({
+        pathname:"/wait",
+        query: {
+            "username": username,
+            "gameId": gameId,
+            "passcode": passcode,
+            "gameLength": gameLength
+            }
+    }));
+    // need a game creation method here
+});
 
-        // host game and direct to game
-        /* res.redirect(url.format({
-            pathname:"/game",
-            query: {
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength,
-               "type": "host"
-             }
-        })); */
-
-        // Save gameId and corresponding passcode
-        games[gameId] = passcode;
+router.post(`/join`, (req, res) => {
+    // join game and direct to game
+    const username = req.user.username;
+    const gameId = req.body.game_id;
+    
+    if (gameId != "") {
         console.log(games[gameId]);
-        res.redirect(url.format({
-            pathname:"/wait",
-            query: {
-               "username": username,
-               "gameId": gameId,
-               "passcode": passcode,
-               "gameLength": gameLength
-             }
-        }));
-        // need a game creation method here
-    } else if (buttonPressed == "join") {
-        // join game and direct to game
-        gameId = req.body.game_id;
-        if (gameId != "") {
-        /* res.redirect(url.format({
-            pathname:"/game",
-            query: {
-               "gameId": gameId,
-               "passcode": passcode,
-               "type": "join"
-             }
-        })); */
-            console.log(games[gameId]);
-            if (passcode == games[gameId]) {
-                res.redirect(url.format({
-                    pathname:"/wait",
-                    query: {
-                    "username": username,
-                    "gameId": gameId,
-                    "passcode": passcode,
-                    "gameLength": gameLength
-                    }
-                }));
-            } else {
-                alert(`Incorrect game passcode.`);
-                res.redirect(`/`);
-            };
+        if (passcode == games[gameId]) {
+            res.redirect(url.format({
+                pathname:"/wait",
+                query: {
+                "username": username,
+                "gameId": gameId,
+                "passcode": passcode,
+                "gameLength": gameLength
+                }
+            }));
         } else {
-            alert(`Empty game ID.`);
+            alert(`Incorrect game passcode.`);
             res.redirect(`/`);
         };
-    } else if (buttonPressed == "back") {
-        // Go back
-        res.redirect('/lobby');
-    }  else {
-        console.log("User did not press any buttons on the register page.");
-    }
+    } else {
+        alert(`Empty game ID.`);
+        res.redirect(`/`);
+    };
 });
 
 module.exports = router;

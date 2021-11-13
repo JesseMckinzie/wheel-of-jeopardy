@@ -13,7 +13,8 @@
       <div class="logo">
         <img src="/img/logo.gif" alt="logo">
       </div>
-      <form class="login" action="/lobby/host_api" method="POST">
+
+      <form class="login" action="/lobby/host" method="POST">
         <div class="form-group">
           <p white-space="pre"> l o g g e d  i n  a s  {{username}}</p>
         </div>
@@ -29,10 +30,14 @@
         <div class="form-group">
           <button class="full-btn" name="button" value="create" id="create-btn"> c r e a t e  g a m e</button>
         </div>
+      </form>
+
+      <form class="login" action="/">
         <div class="form-group">
-          <button class="full-btn" name="button" value="back"> b a c k</button>
+          <button class="full-btn" name="back-btn" value="back"> b a c k</button>
         </div>
       </form>
+
       <div class="disclaimer">
         <p>&copy i m p o r t  t e a m N a m e  2 0 2 1</p>
       </div>
