@@ -296,6 +296,32 @@ const getSingleQuestion = (categoryIdx, questions) => {
           players[index].currentPlayer = false;
         }
       });
+
+       // Delay 5 seconds before answer submit
+    
+    function displaySubmitTimer() {
+      io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} has not submitted an answer. Time's up!`});
+      correctChoice = gameInfo.chosenQ.correctAnswer;
+      msg = "The correct answer was ".concat(correctChoice, ".");
+      io.emit('chat-message-bounce', {username: "System", msg: msg});
+      io.emit('reset-wheel');
+      msg = `${winner.username} lost ${currentPoint} points.`;
+      currentScore = Number(currentScore) - Number(currentPoint);
+      io.emit('chat-message-bounce', {username: "System", msg: msg});
+      msg = `${winner.username} has ${currentScore} total points`; 
+      // answerStatus = "lost";
+      playerScores[currentPlayer] = currentScore;  //update current player's score
+      players.forEach(function (item, index) {
+        // Update the current player according to the winner of the buzzer
+        if (item.username == data.username) {
+          players[index].score = currentScore;
+        };
+      });
+      console.log(players);
+      io.emit('decideWhoBuzzedFirst', players);
+    }
+
+      submitTime = setTimeout(displaySubmitTimer, 6000);
       
       io.emit('decideWhoBuzzedFirst', players);
       // Notify everyone in the room of the person who buzzed in first
@@ -305,7 +331,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
   
   gameSocket.on('submit-answer', (data) => {
     let answerStatus = "";
-    io.emit('chat-message-bounce', {username:"System", msg: "I'm getting here"});
+    clearTimeout(submitTime);
     ansChoice = data.choice.split(' ').slice(1).join(' ');
     correctChoice = gameInfo.chosenQ.correctAnswer;
     msg = `${data.username} picked answer choice ${ansChoice}.`;
