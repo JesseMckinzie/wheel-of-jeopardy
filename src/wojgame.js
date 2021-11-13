@@ -7,9 +7,12 @@ var players = [];
 var numOfActivePlayers = players.length;
 var currentPlayer = 0;
 var curRound = 0;
-var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+//var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+var gameCategories = ["Science", "Sports", "Literature", "Film", "Music", "Geography"];
 var gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
-var categoriesIds = [17, 21, 10, 11, 23, 25];
+var categoriesIds;
+if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
+else categoriesIds = [17, 21, 10, 11, 12, 22];
 var categories = [
   {id: 17, name: "Science", spinValue:360}, 
   {id: 21, name: "Sports", spinValue:330}, 
@@ -125,6 +128,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
     questions[categoryIdx].data.results.splice(0, 1);
     --questionsReaming;
     if(questions[categoryIdx].data.results.length === 0){ 
+      io.emit('chat-message-bounce', {username: "System", msg: `There are no more questions remaining in the ${gameCategories[categoryIdx]} category.`});
       gameCategories.splice(categoryIdx,1);
       questions.splice(categoryIdx, 1);
       gameCategoriesSpinValues.splice(categoryIdx,1);
