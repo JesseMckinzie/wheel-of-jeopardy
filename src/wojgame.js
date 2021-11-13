@@ -29,6 +29,7 @@ var currentPoint = 0;
 var questionsReaming = -1;
 var gameStarted = false;
 const requiredNumPlayers = 3;
+var avaiPlayerRoles = [0, 1, 2];
 
 const apiReqBuilder = (amount, id) => {
   // return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
@@ -174,7 +175,8 @@ const getSingleQuestion = (index, questions) => {
     // if this player does not exist, push it
     if (!found) {
       // Update the player role, either 0 = host, or > 0 for players 1 and 2
-      data.playerRole = numOfActivePlayers;
+      data.playerRole = avaiPlayerRoles[0];
+      avaiPlayerRoles.splice(0, 1);
       data.score = 0;
       numOfActivePlayers++;
       if (data.playerRole == currentPlayer) {
@@ -338,6 +340,7 @@ const getSingleQuestion = (index, questions) => {
       console.log(gameSocket.id);
       console.log("A client disconnected");
       let loggedOutPlayer = "";
+      let loggedOutPlayerRole = "";
       // Purge player from players
       players.forEach(function (item, index) {
         if (item.socketid == socket.id) {
@@ -353,9 +356,11 @@ const getSingleQuestion = (index, questions) => {
           };
           players.splice(index, 1);
           loggedOutPlayer = item.username;
+          loggedOutPlayerRole = item.playerRole;
           io.emit('remove-player', {username: loggedOutPlayer});
         };
       });
+      avaiPlayerRoles.push(loggedOutPlayerRole);      
       console.log(players);
       io.emit('chat-message-bounce', {username: "System", msg: `${loggedOutPlayer} just left the game.`});
       // flush all game variables
