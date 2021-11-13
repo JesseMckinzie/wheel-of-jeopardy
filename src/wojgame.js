@@ -9,6 +9,7 @@ var currentPlayer = 0;
 var curRound = 0;
 var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
 var gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
+var categoriesIds = [17, 21, 10, 11, 23, 25];
 var categories = [
   {id: 17, name: "Science", spinValue:360}, 
   {id: 21, name: "Sports", spinValue:330}, 
@@ -30,10 +31,11 @@ var questionsReaming = -1;
 var gameStarted = false;
 const requiredNumPlayers = 3;
 var avaiPlayerRoles = [0, 1, 2];
+var chosenInd = -1;
 
 const apiReqBuilder = (amount, id) => {
-  // return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
-  return `https://opentdb.com/api.php?amount=${amount}&type=multiple&encode=url3986`;
+  return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
+  //return `https://opentdb.com/api.php?amount=${amount}&type=multiple&encode=url3986`;
 }
 /*
 const questionsBuilder = () => {
@@ -45,12 +47,15 @@ const questionsBuilder = () => {
   return questions;
 }
 */
+
+/*
 const getQuestions = async(gameLength) => {
   let response = await axios(apiReqBuilder(gameLength));
   let questions = response.data;
 
   return questions;
 }
+*/
 
 const getWinnerIdx = (array) =>{
   var max = -Number.MAX_VALUE;
@@ -62,15 +67,27 @@ const getWinnerIdx = (array) =>{
   return maxIdx;
 }
 
-/*
-// Fisher-Yates shuffle from https://javascript.info/task/shuffle
-const shuffle = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1)); // random index from 0 to i
-    [array[i], array[j]] = [array[j], array[i]];
-  }
+const getQuestions = async(categoryIds) => {
+  const responses = await Promise.all([
+    axios(apiReqBuilder(6, categoriesIds[0])), 
+    axios(apiReqBuilder(6, categoriesIds[1])),
+    axios(apiReqBuilder(6, categoriesIds[2])),
+    axios(apiReqBuilder(6, categoriesIds[3])),
+    axios(apiReqBuilder(6, categoriesIds[4])),
+    axios(apiReqBuilder(6, categoriesIds[5]))
+  ]);
+  /*
+  console.log(responses[0].data);
+  console.log(responses[1].data);
+  console.log(responses[2].data);
+  console.log(responses[3].data);
+  console.log(responses[4].data);
+  console.log(responses[5].data);
+  */
+  return responses;
 }
-*/
+
+
 
 const shuffle = (array) => {
   let currentIndex = array.length,  randomIndex;
@@ -90,15 +107,16 @@ const shuffle = (array) => {
   return array;
 }
 
-const getSingleQuestion = (index, questions) => {
+const getSingleQuestion = (categoryIdx, questions) => {
+  console.log(categories[categoryIdx]);
   var question = "Game over!";
   var answerA = "Game over!";
   var answerB = "Game over!";
   var answerC = "Game over!";
   var answerD = "Game Over!"
   var correctAnswer = "";
-
-  var information = questions.results[index];
+  console.log(questions[categoryIdx].data.results[0])
+  const information = questions[categoryIdx].data.results[0];
   if(information !== undefined) {
     var question = unescape(information.question);
     var correctAnswer = unescape(information.correct_answer);
@@ -112,7 +130,7 @@ const getSingleQuestion = (index, questions) => {
     answerC = unescape(answers[2]);
     answerD = unescape(answers[3]);
 
-    questions.results.splice(index, 1);
+    questions[categoryIdx].data.results.splice(0, 1);
     --questionsReaming;
   }
 
@@ -188,7 +206,7 @@ const getSingleQuestion = (index, questions) => {
     // Notify everyone in the room that a user just joined
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just joined the game.`});
     // Can we start the game?
-    if (numOfActivePlayers == requiredNumPlayers) {
+    if (numOfActivePlayers > 0) {
       gameStarted = true;
       io.emit('game-started');
       io.emit('chat-message-bounce', {username: "System", msg: `The game has started.`});
@@ -225,7 +243,7 @@ const getSingleQuestion = (index, questions) => {
         players[index].currentPlayer = false;
       };
     }); */
-    chosenQ = getSingleQuestion(Math.floor(Math.random()*questions.results.length), questions);
+    chosenQ = getSingleQuestion(chosenInd, questions);
     
     // Delay 3 seconds before sending question
     function sendQuestionDelay() {
