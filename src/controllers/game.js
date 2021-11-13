@@ -73,21 +73,6 @@ router.get(`/`, async(req, res) => {
     res.render('game', thingsToRender)
 });
 
-/* POST user action. */
-router.post(`/player_actions`, (req, res) => {
-    var buttonPressed = req.body.button;
-    //console.log(buttonPressed);
-    if (buttonPressed == "logout") {
-        // logout
-        res.redirect('/logout');
-    } else if (buttonPressed == "back") {
-        // Go back
-        res.redirect('/lobby');
-    }  else {
-        console.log("User did not press any buttons on the game page.");
-    }
-});
-
 module.exports = router;
 
 const shuffleArray = (array) => {

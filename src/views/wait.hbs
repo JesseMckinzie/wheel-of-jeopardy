@@ -70,6 +70,7 @@
       <div class="current-profile-pic">
         <img src="/img/profile_pic.png" alt="current-profile-pic">
       </div>
+      
       <div class="current-profile-information">
         <p>
           n a m e  : <a id="player-0">{{username}}</a><br>
@@ -87,12 +88,22 @@
         <button class="ans-btn" type="button" name="button" id="submit-ans-d" value=""> d</button> 
       </form>
     </div>
+    
     <div class="player-btns-container"> 
-      <form action="/game/player_actions" class="current-player-actions" method="POST">
-        <button class="action-btn" type="button" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
-        <button class="action-btn" type="button" name="button" value="" id="buzz-in-button"> b u z z  i n</button> <br> <br>
-        <button class="action-btn" name="button" value="back" id="back-button"> b a c k</button> <br> <br>
-        <button class="action-btn" name="button" value="logout" id="log-out-button"> l o g  o u t</button>
+      <form class="current-player-actions">
+        <button class="action-btn" type="button" name="spin-button" value="" id="spin-button"> s p i n</button> <br> <br>
+      </form>
+
+      <form class="current-player-actions">
+        <button class="action-btn" type="button" name="buzz-in-button" value="" id="buzz-in-button"> b u z z  i n</button> <br> <br>
+      </form>
+
+      <form class="current-player-actions" action="/lobby">
+        <button class="action-btn" name="back-button" value="back" id="back-button"> b a c k</button> <br> <br>
+      </form>
+
+      <form class="current-player-actions" action="/logout">
+        <button class="action-btn" name="log-out-button" value="logout" id="log-out-button"> l o g  o u t</button>
       </form>
     </div>   
   </script>
