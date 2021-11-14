@@ -102,6 +102,11 @@ jQuery(function($){
             IO.socket.on('game-end', (data) => {
                 App.endGame(data);
             });
+            // CLIENT: Remove slice from wheel
+            IO.socket.on('remove-slice-from-wheel', (data) => {
+                var timestamp = new Date().getTime();
+                $('#wheel-img').attr("src", data.src + "?t=" + timestamp);
+            });
             // CLIENT: Render points won or lost animation
             /* IO.socket.on('play-pts-anim', (data) => {
                 if (data.status == "won") {

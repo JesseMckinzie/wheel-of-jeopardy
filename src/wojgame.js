@@ -1,12 +1,15 @@
 var io;
 var gameSocket;
 const axios = require('axios');
+var fs = require('fs');
+parseString = require("xml2js").parseString;
+xml2js = require("xml2js");
 
 /* Game information */
 var players = [];
 var numOfActivePlayers = players.length;
 var currentPlayer = 0;
-var curRound = 0;
+var curRound = 1;
 //var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
 var gameCategories = ["Science", "Sports", "Literature", "Film", "Music", "Geography"];
 var gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
@@ -72,12 +75,12 @@ const getWinnerIdx = (array) =>{
 
 const getQuestions = async(categoryIds) => {
   const responses = await Promise.all([
-    axios(apiReqBuilder(5, categoryIds[0])), 
-    axios(apiReqBuilder(5, categoryIds[1])),
-    axios(apiReqBuilder(5, categoryIds[2])),
-    axios(apiReqBuilder(5, categoryIds[3])),
-    axios(apiReqBuilder(5, categoryIds[4])),
-    axios(apiReqBuilder(5, categoryIds[5]))
+    axios(apiReqBuilder(1, categoryIds[0])), 
+    axios(apiReqBuilder(1, categoryIds[1])),
+    axios(apiReqBuilder(1, categoryIds[2])),
+    axios(apiReqBuilder(1, categoryIds[3])),
+    axios(apiReqBuilder(1, categoryIds[4])),
+    axios(apiReqBuilder(1, categoryIds[5]))
   ]);
 
   return responses;
@@ -129,6 +132,8 @@ const getSingleQuestion = (categoryIdx, questions) => {
     --questionsReaming;
     if(questions[categoryIdx].data.results.length === 0){ 
       io.emit('chat-message-bounce', {username: "System", msg: `There are no more questions remaining in the ${gameCategories[categoryIdx]} category.`});
+      console.log("Removing ".concat(gameCategories[categoryIdx]))
+      editSVG("public/img/wheel3.svg", "public/img/wheel3.svg", gameCategories[categoryIdx]);
       gameCategories.splice(categoryIdx,1);
       questions.splice(categoryIdx, 1);
       gameCategoriesSpinValues.splice(categoryIdx,1);
@@ -136,6 +141,51 @@ const getSingleQuestion = (categoryIdx, questions) => {
   }
 
    return {question, answerA, answerB, answerC, answerD, correctAnswer};
+}
+
+// Reads and edits an svg file. Deletes the chosen question category from the SVG
+const editSVG = (imageLink, outLink, qCat) => {
+  fs.readFile(imageLink, "utf-8", function(err, data) {
+    if (err) console.log(err);
+    // we log out the readFile results
+    // console.log(data);
+    // we then pass the data to our method here
+    parseString(data, function(err, result) {
+      if (err) console.log(err);
+      // here we log the results of our xml string conversion
+      // console.log(result);
+      var json = result;
+      let foundInd = -1;
+      json.svg.g[0].text.forEach(function (item, index) {
+        let catName = "";
+        if (item._) {
+          catName = catName + item._.trim();
+        };
+        item.tspan.forEach(function (item2, index2) {
+          if (item2._) {
+            catName = catName + item2._.trim();
+          }
+        });
+        //console.log(catName);
+        if (catName == qCat.toUpperCase()) {
+          foundInd = index;
+        };
+      });
+      if (foundInd != -1) {
+        json.svg.g[0].text[foundInd]._ = "";
+        json.svg.g[0].text[foundInd].tspan.forEach(function (item3, index3) {
+          item3._ = "";
+        });
+      };
+      var builder = new xml2js.Builder();
+      var xml = builder.buildObject(json);
+      fs.writeFile(outLink, xml, function(err, data) {
+        if (err) console.log(err);
+        console.log("successfully updated the wheel");
+      });
+      io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
+    });
+  });
 }
 
 /**
@@ -231,6 +281,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just spun the wheel.`});
     // Notify everyone in the room of the current question category
     io.emit('chat-message-bounce', {username: "System", msg: `The current question category is ${chosenQCat}`});
+    io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
   });
 
   // SERVER: Return a question corresponding to the requested point value
@@ -376,6 +427,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
       io.emit('game-end', winner)
     } else {
       io.emit('reset-wheel');
+      io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
       // io.emit('play-pts-anim', {status: answerStatus});
     }
     io.emit('chat-message-bounce', {username: "System", msg: `The game is currently in Round ${++curRound}.`});
@@ -414,7 +466,7 @@ const getSingleQuestion = (categoryIdx, questions) => {
       if (players.length < 1) {
         numOfActivePlayers = 0;
         currentPlayer = 0;
-        curRound = 0;
+        curRound = 1;
         var questions;
         gameInit = false;
         var gameInfo;
@@ -425,6 +477,12 @@ const getSingleQuestion = (categoryIdx, questions) => {
         questionsReaming = -1;
         gameStarted = false;
         avaiPlayerRoles = [0, 1, 2];
+        // Reset wheel image
+        fs.readFile("public/img/wheel2.svg", "utf-8", function(err, data) {
+          fs.writeFile("public/img/wheel3.svg", data, function(err, data) {
+            if (err) console.log(err);
+          });
+        });
       };
     };
   });  
