@@ -1,4 +1,14 @@
 {
+    "test": {
+      "username": "root",
+      "password": "password",
+      "database": "testWOJ",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "define": {
+        "timestamps": false
+      }
+    },
     "development": {
       "username": "root",
       "password": "password",
