@@ -106,15 +106,17 @@ jQuery(function($){
             IO.socket.on('remove-slice-from-wheel', (data) => {
                 var timestamp = new Date().getTime();
                 $('#wheel-img').attr("src", data.src + "?t=" + timestamp);
-            });
+            });         
             // CLIENT: Render points won or lost animation
-            /* IO.socket.on('play-pts-anim', (data) => {
-                if (data.status == "won") {
-                    $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/no-scope-low-res.gif" alt="current-profile-pic">');
-                } else if (data.status == "lost") {
-                    $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/thanos.gif" alt="current-profile-pic">');
+            IO.socket.on('play-pts-anim', (data) => {
+                if (App.currentPlayer) {
+                    if (data.status == "won") {
+                        $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/no-scope-low-res.gif" alt="current-profile-pic">');
+                    } else if (data.status == "lost") {
+                        $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/thanos.gif" alt="current-profile-pic">');
+                    };
                 };
-            }); */                        
+            });                       
         }
     };
 

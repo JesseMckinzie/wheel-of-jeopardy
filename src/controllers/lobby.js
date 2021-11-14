@@ -98,11 +98,9 @@ router.post(`/host_api`, (req, res) => {
                 }));
             } else {
                 alert(`Incorrect game passcode.`);
-                res.redirect(`/`);
             };
         } else {
             alert(`Empty game ID.`);
-            res.redirect(`/`);
         };
     } else if (buttonPressed == "back") {
         // Go back
