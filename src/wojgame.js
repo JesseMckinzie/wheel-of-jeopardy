@@ -38,6 +38,7 @@ var gameStarted = false;
 const requiredNumPlayers = 3;
 var avaiPlayerRoles = [0, 1, 2];
 var chosenInd = -1;
+var hasSomeoneBuzzedIn = false;
 
 const apiReqBuilder = (amount, id) => {
   return `https://opentdb.com/api.php?amount=${amount}&category=${id}&type=multiple&encode=url3986`;
@@ -73,14 +74,14 @@ const getWinnerIdx = (array) =>{
   return maxIdx;
 }
 
-const getQuestions = async(categoryIds) => {
+const getQuestions = async(categoryIds, numQPerCat) => {
   const responses = await Promise.all([
-    axios(apiReqBuilder(1, categoryIds[0])), 
-    axios(apiReqBuilder(1, categoryIds[1])),
-    axios(apiReqBuilder(1, categoryIds[2])),
-    axios(apiReqBuilder(1, categoryIds[3])),
-    axios(apiReqBuilder(1, categoryIds[4])),
-    axios(apiReqBuilder(1, categoryIds[5]))
+    axios(apiReqBuilder(numQPerCat, categoryIds[0])), 
+    axios(apiReqBuilder(numQPerCat, categoryIds[1])),
+    axios(apiReqBuilder(numQPerCat, categoryIds[2])),
+    axios(apiReqBuilder(numQPerCat, categoryIds[3])),
+    axios(apiReqBuilder(numQPerCat, categoryIds[4])),
+    axios(apiReqBuilder(numQPerCat, categoryIds[5]))
   ]);
 
   return responses;
@@ -186,7 +187,60 @@ const editSVG = (imageLink, outLink, qCat) => {
       io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
     });
   });
-}
+};
+
+// Make determine winner of buzz in a function so we can reuse it
+const determineWinnerOfBuzzIn = () => {
+  let winnerTime = Number.MAX_VALUE;
+  playersBuzzedTime.forEach(function (item, index) {
+    // update current player
+    if (item.time < winnerTime) {
+      winnerTime = item.time;
+      winner = item;
+    };
+  });
+  playersBuzzedTime.length = 0;
+  // Update current player
+  players.forEach(function (item, index) {
+    // Update the current player according to the winner of the buzzer
+    if (item.username == winner.username) {
+      players[index].currentPlayer = true;
+      currentPlayer = players[index].playerRole;
+      currentScore = playerScores[currentPlayer];
+    } else {
+      players[index].currentPlayer = false;
+    }
+  });
+  clearTimeout(displayTime);
+  function displaySubmitTimer() {
+    io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} has not submitted an answer. Time's up!`});
+    correctChoice = gameInfo.chosenQ.correctAnswer;
+    msg = "The correct answer was ".concat(correctChoice, ".");
+    io.emit('chat-message-bounce', {username: "System", msg: msg});
+    io.emit('reset-wheel');
+    msg = `${winner.username} lost ${currentPoint} points.`;
+    currentScore = Number(currentScore) - Number(currentPoint);
+    io.emit('chat-message-bounce', {username: "System", msg: msg});
+    msg = `${winner.username} has ${currentScore} total points`; 
+    // answerStatus = "lost";
+    playerScores[currentPlayer] = currentScore;  //update current player's score
+    players.forEach(function (item, index) {
+      // Update the current player according to the winner of the buzzer
+      if (item.username == winner.username) {
+        players[index].score = currentScore;
+      };
+    });
+    console.log(players);
+    io.emit('decideWhoBuzzedFirst', players);
+  }
+
+  submitTime = setTimeout(displaySubmitTimer, 10000);
+  
+  io.emit('decideWhoBuzzedFirst', players);
+  // Notify everyone in the room of the person who buzzed in first
+  io.emit('chat-message-bounce', {username: "System", msg: `${winner.username} is the person who buzzed in first!`});
+  io.emit('startTimerForQA');  
+};
 
 /**
  * This function is called by www to initialize a new game instance.
@@ -211,7 +265,7 @@ const editSVG = (imageLink, outLink, qCat) => {
       // get all the questions in the beginning and wait for api call to complete
       async function awaitQuestions() {
         let myPromise = new Promise(function(resolve) {
-          resolve(getQuestions(categoriesIds));
+          resolve(getQuestions(categoriesIds, data.gameLength / 6));
         });
         questions = await myPromise;
       }
@@ -257,7 +311,7 @@ const editSVG = (imageLink, outLink, qCat) => {
     // Notify everyone in the room that a user just joined
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just joined the game.`});
     // Can we start the game?
-    if (numOfActivePlayers > 0) {
+    if (numOfActivePlayers == requiredNumPlayers) {
       gameStarted = true;
       io.emit('game-started');
       io.emit('chat-message-bounce', {username: "System", msg: `The game has started.`});
@@ -307,18 +361,23 @@ const editSVG = (imageLink, outLink, qCat) => {
     // Delay 5 seconds before buzz-in
     
     function displayQuestionTimer() {
-      io.emit('chat-message-bounce', {username: "System", msg: "No players have buzzed in. Time's up!"});
-      correctChoice = gameInfo.chosenQ.correctAnswer;
-      msg = "The correct answer was ".concat(correctChoice, ".");
-      io.emit('chat-message-bounce', {username: "System", msg: msg});
-      io.emit('reset-wheel');
-      console.log(players);
-      io.emit('decideWhoBuzzedFirst', players);
+      if (!hasSomeoneBuzzedIn) {
+        io.emit('chat-message-bounce', {username: "System", msg: "No players have buzzed in. Time's up!"});
+        correctChoice = gameInfo.chosenQ.correctAnswer;
+        msg = "The correct answer was ".concat(correctChoice, ".");
+        io.emit('chat-message-bounce', {username: "System", msg: msg});
+        io.emit('reset-wheel');
+        console.log(players);
+        io.emit('decideWhoBuzzedFirst', players);
+      } else {
+        determineWinnerOfBuzzIn();
+      };
     }
     
-    setTimeout(sendQuestionDelay, 3000);
+    setTimeout(sendQuestionDelay, 4000);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
+    hasSomeoneBuzzedIn = false;
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
     displayTime = setTimeout(displayQuestionTimer, 8000);
@@ -326,9 +385,17 @@ const editSVG = (imageLink, outLink, qCat) => {
 
   // SERVER: Times everyone buzzing in
   gameSocket.on('buzzed-in', (data) => {
-    playersBuzzedTime.push(data);
+    // Only push unique usernames, so no repeat buzzes
+    flag = false;
+    playersBuzzedTime.forEach(function (item, index) {
+      if (item.username == data.username) { flag = true;};
+    });
+    if (!flag) {
+      playersBuzzedTime.push(data);
+    }
     // reset question timeout after buzz-in
-    clearTimeout(displayTime);
+    // clearTimeout(displayTime);
+    hasSomeoneBuzzedIn = true;
     if (playersBuzzedTime.length == numOfActivePlayers) {
       let winnerTime = Number.MAX_VALUE;
       playersBuzzedTime.forEach(function (item, index) {
@@ -351,6 +418,7 @@ const editSVG = (imageLink, outLink, qCat) => {
           players[index].currentPlayer = false;
         }
       });
+      clearTimeout(displayTime);
 
        // Delay 10 seconds before answer submit
     
@@ -399,13 +467,13 @@ const editSVG = (imageLink, outLink, qCat) => {
       currentScore = Number(currentScore) + Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
       msg = `${data.username} has ${currentScore} total points`;
-      // answerStatus = "won";
+      answerStatus = "won";
     } else {
       msg = `${data.username} lost ${currentPoint} points.`;
       currentScore = Number(currentScore) - Number(currentPoint);
       io.emit('chat-message-bounce', {username: "System", msg: msg});
       msg = `${data.username} has ${currentScore} total points`; 
-      // answerStatus = "lost";
+      answerStatus = "lost";
     }
     
     playerScores[currentPlayer] = currentScore;  //update current player's score
@@ -428,7 +496,7 @@ const editSVG = (imageLink, outLink, qCat) => {
     } else {
       io.emit('reset-wheel');
       io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
-      // io.emit('play-pts-anim', {status: answerStatus});
+      io.emit('play-pts-anim', {status: answerStatus});
     }
     io.emit('chat-message-bounce', {username: "System", msg: `The game is currently in Round ${++curRound}.`});
   });
@@ -477,6 +545,8 @@ const editSVG = (imageLink, outLink, qCat) => {
         questionsReaming = -1;
         gameStarted = false;
         avaiPlayerRoles = [0, 1, 2];
+        hasSomeoneBuzzedIn = false;
+        chosenInd = -1;
         // Reset wheel image
         fs.readFile("public/img/wheel2.svg", "utf-8", function(err, data) {
           fs.writeFile("public/img/wheel3.svg", data, function(err, data) {
