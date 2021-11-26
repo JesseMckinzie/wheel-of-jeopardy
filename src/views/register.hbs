@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Register</title>
     <link rel="stylesheet" href="/stylesheets/authe.css">
 </head>
 <body>
@@ -13,7 +13,8 @@
       <div class="logo">
         <img src="/img/logo.gif" alt="logo">
       </div>
-      <form class="login" action="/login" method="POST">
+      
+      <form class="register" action="/register" method="POST">
         <div class="form-group">
           <input type="text" name="username" placeholder="u s e r n a m e" id="username" class="form-control">
         </div>
@@ -21,12 +22,16 @@
           <input type="text" name="email" placeholder="e m a i l" id="email" class="form-control">
         </div>
         <div class="form-group">
-          <a href="register">c r e a t e  a n  a c c o u n t</a>
-        </div>
-        <div class="form-group">
-          <button class="full-btn"> e n t e r</button>
+          <button class="full-btn" name="button" value="create"> c r e a t e</button>
         </div>
       </form>
+
+      <form class="register" action="/logout">
+        <div class="form-group">
+          <button class="full-btn" name="button" value="back"> b a c k</button>
+        </div>
+      </form>
+
       <div class="disclaimer">
         <p>&copy i m p o r t  t e a m N a m e  2 0 2 1</p>
       </div>

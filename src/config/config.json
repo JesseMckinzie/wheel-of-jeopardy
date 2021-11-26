@@ -1,10 +1,33 @@
 {
-    "development": {
-      "username": "postgres",
+    "test": {
+      "username": "root",
       "password": "password",
-      "database": "wheelOfJeopardy",
+      "database": "testWOJ",
       "host": "127.0.0.1",
-      "dialect": "postgres"
+      "dialect": "mysql",
+      "define": {
+        "timestamps": false
+      }
+    },
+    "development": {
+      "username": "root",
+      "password": "password",
+      "database": "applications",
+      "host": "127.0.0.1",
+      "dialect": "mysql",
+      "define": {
+        "timestamps": false
+      }
+    },
+    "onlinedev": {
+      "username": "sql3449687",
+      "password": "hVpP3sw3Nu",
+      "database": "sql3449687",
+      "host": "sql3.freemysqlhosting.net",
+      "dialect": "mysql",
+      "define": {
+        "timestamps": false
+      }
     },
     "production": {
       "use_env_variable": "DATABASE_URL"

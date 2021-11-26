@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require('express');
 const router = express.Router();
+const alert = require('alert'); 
 const axios = require('axios')
-const db = require('../database/database')
 const jwt = require("jsonwebtoken");
 
+const User = require("../models").User;
 
 const createToken = (username, email) => {
     return jwt.sign(
@@ -19,10 +20,41 @@ const createToken = (username, email) => {
     );
 }
 
-
 /* GET home page. */
 router.get(`/`, async(req, res) => {
     res.render('authe')
+});
+
+/* GET signup page. */
+router.get(`/register`, async(req, res) => {
+    res.render('register')
+});
+
+router.get('/wait', async(req, res) => {
+    username = req.query.username;
+    gameId = req.query.gameId;
+    passcode = req.query.passcode;
+    gameLength = req.query.gameLength;
+    console.log(username);
+    res.render('wait', {username, gameId, passcode, gameLength})
+});
+
+/* POST signup page. */
+router.post(`/register`, (req, res) => {
+    // console.log(buttonPressed);
+    User.create(req.body)
+    .then((newUser) => {
+        const token = createToken(newUser.username, newUser.email);
+        console.log(token);
+        res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
+        res.redirect(`/lobby`);
+    })
+    .catch((err) => {
+        // res.send(`err ${err}`);
+        alert(err.errors[0].message);
+        res.render(`register`);
+        // res.redirect(`/register`);
+    });
 });
 
 // SIGN OUT ROUTE
@@ -31,50 +63,29 @@ router.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
-var i = 1;
+let i = 1;
 // get data from client
-router.post('/api', (req, res) => {
-    //console.log(req.body);
-    var userName = req.body.uname;
-    var email = req.body.email;
+router.post('/login', (req, res) => {
+    // console.log(req.body);
+    User.findOne({
+        where: {
+            username: req.body.username,
+            email: req.body.email
+        },
+    }).then((foundUser) => {
+    if (foundUser) {
+            console.log(`Player ${i} ${foundUser.username} has connected.`);
+            ++i;
 
-
-    db.query(`SELECT username, email FROM users WHERE username = "` + userName + `"`, (err, result, field) => {
-        if(result.length == 0) {
-            var command = `INSERT INTO users (username, email) VALUES ( "` + userName + `","` + email + `")`;
-
-            db.query(command, (err, result) => {
-                if (err) throw err;
-                console.log('User has been added to database.');
-
-                const token = createToken(userName, email)
-                res.cookie("jwt", token);
-
-                res.redirect('/game')
-            });
-        } else {
-            result = JSON.stringify(result);
-            result = JSON.parse(result)[0];
-            if(result.email === email) {
-                //throw username already associated with another email error
-                console.log("Log in successful!")
-                console.log(`Player ${i} (${userName}) has connected.`);
-                ++i;
-
-                const token = createToken(userName, email)
-                res.cookie("jwt", token);
-                
-                res.redirect('/game')
-            } else {
-                console.log("Incorrect username or email.")
-                res.redirect('/')
-            } 
-        }
+            const token = createToken(foundUser.username, foundUser.email);
+            console.log(token);
+            res.cookie("jwt", token); // SEND A NEW COOKIE TO THE BROWSER TO STORE TOKEN
+            res.redirect(`/lobby`);
+    } else {
+        alert(`Incorrect username or email.`)
+        res.redirect(`/`);
+    }
     });
-
-    
-
-    
 });
 
 module.exports = router;

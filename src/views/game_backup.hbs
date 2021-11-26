@@ -1,0 +1,66 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Session</title>
+    <link rel="stylesheet" href="../public/stylesheets/style.css">
+  </head>
+  <body>
+    <h1>Wheel of Jeopardy</h1>
+    <form action="/game" id="game_form" name="the_game_form">
+        <p>{{question}}</p>
+        <input type="radio" id="answer_a" name="answer_choice" value="a">
+        <label for="answer_a">a )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_b" name="answer_choice" value="b">
+        <label for="answer_b">b )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_c" name="answer_choice" value="c">
+        <label for="answer_c">c )  {{answer}}</label><br>
+
+        <input type="radio" id="answer_d" name="answer_choice" value="d">
+        <label for="answer_d">d )  {{answer}}</label><br>
+
+        <br>
+        {{!-- <input id="buttonId" type="submit"> --}}
+        <button type="button" id="game_submit_button">e n t e r</button>
+    </form>
+
+    <form action="/back">
+      <button class="full-btn" name="button" value="back"> b a c k</button>
+    </form>
+
+    <form action="/logout">
+      <input id="buttonId" type="submit" value="Log Out">
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      var socket = io();
+
+      var radios = document.querySelectorAll('input[name="answer_choice"]');
+      var ans;
+      for (var i = 0, length = radios.length; i < length; i++) {
+        if (radios[i].checked) {
+          // do whatever you want with the checked radio
+          var ans = i;
+          alert(ans);
+          // only one radio can be logically checked, don't check the rest
+          break;
+        }
+      }
+
+      var form = document.getElementById('game_form');
+
+      document.getElementById("game_submit_button").addEventListener("click", function() {
+        socket.emit('submit answer', ans);
+      });
+
+      socket.on('submit answer', function() {
+        //alert("A player has answered");
+        form.submit();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waiting Area</title>
+    <link rel="stylesheet" href="/stylesheets/game.css">
+</head>
+<body>
+  <div class="container">
+    <div class="other-players" id="other-players">
+
+    </div>
+
+    <div class="chat-container" id="chat-container">
+
+    </div>    
+
+    <div class="user-profile" id="current-player">
+    
+    </div>    
+
+    <div class="game-area" id="game-area">
+          
+    </div>    
+  </div>
+  <!-- Some hidden variables -->
+   <input type="hidden" id="gameId" value={{gameId}}>
+   <input type="hidden" id="passcode" value={{passcode}}>
+   <input type="hidden" id="gameLength" value={{gameLength}}>
+
+  <!-- Main Title Screen that appears when the page loads for the first time -->
+  <script id="other-players-template" type="text/template">
+
+      <div class="titleWrapper">
+        <span id="timer">00:00</span>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : <a id="player-1"> </a><br>
+              s c o r e  : <a id="score-1"> </a><br>
+              a c t i o n : <br>
+            </p>
+            <p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>
+          </div>           
+        </div>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : <a id="player-2"> </a><br>
+              s c o r e  : <a id="score-2"> </a><br>
+              a c t i o n : <br>
+            </p>
+            <p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>
+          </div>           
+        </div>
+      </div>
+
+  </script>
+
+  <script id="current-player-template" type="text/template">
+    <div class="cur-player-card">
+      <div class="current-profile-pic">
+        <img src="/img/profile_pic.png" alt="current-profile-pic">
+      </div>
+      <div class="current-profile-information">
+        <p>
+          n a m e  : <a id="player-0">{{username}}</a><br>
+          s c o r e  : <a id="score-0"> </a><br>
+          a c t i o n : <br>
+        </p>
+        <p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>
+      </div>
+    </div>
+    <div class="answer-btns-container">
+      <form action="" class="current-player-ans">
+        <button class="ans-btn" type="button" name="button" id="submit-ans-a" value=""> a</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-b" value=""> b</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-c" value=""> c</button> 
+        <button class="ans-btn" type="button" name="button" id="submit-ans-d" value=""> d</button> 
+      </form>
+    </div>
+    <div class="player-btns-container"> 
+      <form action="/game/player_actions" class="current-player-actions" method="POST">
+        <button class="action-btn" type="button" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
+        <button class="action-btn" type="button" name="button" value="" id="buzz-in-button"> b u z z  i n</button> <br> <br>
+        <button class="action-btn" name="button" value="back" id="back-button"> b a c k</button> <br> <br>
+        <button class="action-btn" name="button" value="logout" id="log-out-button"> l o g  o u t</button>
+      </form>
+    </div>   
+  </script>
+
+  <script id="chat-template" type="text/template">
+    <div class="message-container">
+      <ul id="messages"></ul>
+    </div>
+    <form id="chat-form" class="chat-form">
+      <div class="form-group">
+        <input id="chat-input" autocomplete="off" placeholder=""/><button type="button" id="chat-send"> s e n d </button>
+      </div>
+    </form>
+  </script>
+
+  <script id="init-wheel-template" type="text/template">
+    <div class="wheel-container">
+      <img id="wheel-img" src="/img/wheel3.svg" alt="current-profile-pic">
+      <div id="triangle"></div>      
+    </div>
+  </script>
+
+  <script id="wheel-template" type="text/template">
+    <div class="wheel-container">
+      <img id="wheel-img" src="/img/wheel3.svg" alt="current-profile-pic">
+      <div id="triangle"></div>
+      <div class="choose-q-val-container" draggable="true">
+        <div class="title">
+          Choose a point value
+          <button type="button" class="close-button">X</button>
+        </div>
+        <form action="" class="choose-q-val" id="choose-q-val">
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
+            <label for="pt-val-10">10</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
+            <label for="pt-val-20">20</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
+            <label for="pt-val-30">30</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
+            <label for="pt-val-40">40</label>
+          </div><br>
+          <div class="q-val-choice">
+            <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
+            <label for="pt-val-50">50</label>
+          </div><br>
+          <button type="button" id="choose-q-val-btn"> c h o o s e </button>
+        </form>
+      </div>      
+    </div>
+  </script>
+
+  <script id="wheel-template-alt" type="text/template">
+    <div class="wheel-container">
+      <img id="wheel-img" src="/img/wheel3.svg" alt="current-profile-pic">
+      <div id="triangle"></div>  
+    </div>
+  </script>  
+
+  <script id="question-template" type="text/template">
+    <div class="question-container">
+        <div class="title">
+          Choose a point value
+          <button type="button" class="close-button">X</button>
+        </div>
+      <p id="question"></p>
+      <label id="answer_a" for="answer_a">a )  {{answerA}}</label><br>
+      <label id="answer_b" for="answer_b">b )  {{answerB}}</label><br>
+      <label id="answer_c" for="answer_c">c )  {{answerC}}</label><br>
+      <label id="answer_d" for="answer_d">d )  {{answerD}}</label><br>
+    </div>  
+  </script>
+
+  <script id="game-over-template" type="text/template">
+    <div class="question-container">
+      <p id="message"></p>
+      <p id="winner"></p>
+    </div>  
+  </script>
+  <!-- jQuery! -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- If Socket.IO is used with Express, then the /socket.io/ path will
+  serve the proper Socket.IO javascript files used by the browser -->
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- server.js is where all the client-side Anagrammatix game logic -->
+  <script src="client-render.js"></script>
+</body>
+</html>

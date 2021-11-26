@@ -4,59 +4,116 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Session</title>
-    <link rel="stylesheet" href="../public/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/game.css">
   </head>
   <body>
-    <h1>Wheel of Jeopardy</h1>
-    <form action="/game" id="game_form" name="the_game_form">
-        <p>{{question}}</p>
-        <input type="radio" id="answer_a" name="answer_choice" value="a">
-        <label for="answer_a">a )  {{answer}}</label><br>
+    <div class="container">
+      <div class="other-players">
+        <p> timer</p>
+        <p> questions remaining: {{game}}</p>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p id="player-1-info">
+              n a m e  : M i n h<br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>           
+        </div>
+        <div class="player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : <br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>           
+        </div>
+      </div>
 
-        <input type="radio" id="answer_b" name="answer_choice" value="b">
-        <label for="answer_b">b )  {{answer}}</label><br>
+      <div class="chat-container">
+        <div class="message-container">
+          <ul id="messages"></ul>
+        </div>
+        <form id="chat-form" class="chat-form" action="">
+          <div class="form-group">
+            <input id="chat-input" autocomplete="off" placeholder=""/><button id="chat-send"> s e n d </button>
+          </div>
+        </form>
+      </div>
+      
+      <div class="user-profile">
+        <div class="cur-player-card">
+          <div class="current-profile-pic">
+            <img src="/img/profile_pic.png" alt="current-profile-pic">
+          </div>
+          <div class="current-profile-information">
+            <p>
+              n a m e  : {{user}}<br>
+              s c o r e  : <br>
+              a c t i o n : <br>
+            </p>
+          </div>
+        </div>
+        <div class="answer-btns-container">
+          <form action="/game/player_actions" class="current-player-ans" method="POST">
+            <button class="ans-btn" name="button" value=""> a</button> 
+            <button class="ans-btn" name="button" value=""> b</button> 
+            <button class="ans-btn" name="button" value=""> c</button> 
+            <button class="ans-btn" name="button" value=""> d</button> 
+          </form>
+        </div>
+        <div class="player-btns-container">
+          <form action="/game/player_actions" class="current-player-actions" method="POST">
+            <button class="action-btn" name="button" value="" id="spin-button"> s p i n</button> <br> <br>
+            <button class="action-btn" name="button" value=""> b u z z  i n</button> <br> <br>
+            <button class="action-btn" name="button" value="back"> b a c k</button> <br> <br>
+            <button class="action-btn" name="button" value="logout"> l o g  o u t</button>
+          </form>
+        </div>         
+      </div>
 
-        <input type="radio" id="answer_c" name="answer_choice" value="c">
-        <label for="answer_c">c )  {{answer}}</label><br>
+      <div class="game-area">
+        <ul>
+          <li>Question Category 1</li>
+          <li>Question Category 2</li>
+          <li>Question Category 3</li>
+          <li>Question Category 4</li>
+          <li>Question Category 5</li>
+          <li>Question Category 6</li>
+        </ul>
+        <p> The wheel landed on this question category: placeholder{{questionCategory}}</p>
+        <form action="" class="choose-q-val">
+          <input id="q-val-input" autocomplete="off" placeholder="Choose a point value here"/><button id="choose-q-val-btn"> c h o o s e </button>
+        </form>
+        <form action="/game" id="game_form" name="the_game_form" method="POST">
+          <p>{{question}}</p>
+          <label for="answer_a">a )  {{answerA}}</label><br>
+          <label for="answer_b">b )  {{answerB}}</label><br>
+          <label for="answer_c">c )  {{answerC}}</label><br>
+          <label for="answer_d">d )  {{answerD}}</label><br>
 
-        <input type="radio" id="answer_d" name="answer_choice" value="d">
-        <label for="answer_d">d )  {{answer}}</label><br>
-
-        <br>
-        {{!-- <input id="buttonId" type="submit"> --}}
-        <button type="button" id="game_submit_button">e n t e r</button>
-    </form>
-
-    <form action="/logout">
-      <input id="buttonId" type="submit" value="Log Out">
-    </form>
+          <br>
+          <button type="button" id="game_submit_button">e n t e r</button>
+        </form>
+      </div>
+    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script>
       var socket = io();
 
-      var radios = document.querySelectorAll('input[name="answer_choice"]');
-      var ans;
-      for (var i = 0, length = radios.length; i < length; i++) {
-        if (radios[i].checked) {
-          // do whatever you want with the checked radio
-          var ans = i;
-          alert(ans);
-          // only one radio can be logically checked, don't check the rest
-          break;
+      socket.on('playerJoinGame', function(data) {
+        if (data.username != '{{user}}') {
+          document.getElementById("player-1-info").innerHTML = "n a m e :".concat(' ', data.username).concat('', '<br> s c o r e :  <br> a c t i o n  :');
         }
-      }
-
-      var form = document.getElementById('game_form');
-
-      document.getElementById("game_submit_button").addEventListener("click", function() {
-        socket.emit('submit answer', ans);
-      });
-
-      socket.on('submit answer', function() {
-        //alert("A player has answered");
-        form.submit();
-      });
-    </script>
+      });      
+    </script>    
   </body>
 </html>
