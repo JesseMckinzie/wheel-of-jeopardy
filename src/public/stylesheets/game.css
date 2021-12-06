@@ -6,7 +6,7 @@
 body {
   height: 100vh;
   width: 100%;
-  background-color: #fd84fd;
+  background:linear-gradient(to right top, #E0FFC6 0, #83FFC8 33%, #61EBFE 66%, #FC83FC 100%);
 }
 .container {
   height: 100%;
@@ -96,6 +96,8 @@ body {
   font-size: 16px;  
   height: 50%;
   border-radius: 50%;
+  margin-bottom: 30px;
+  margin-right: 15px;
 }
 
 .player-btns-container {

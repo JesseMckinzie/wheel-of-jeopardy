@@ -251,6 +251,15 @@ jQuery(function($){
                     $('#game-area').html($('#wheel-template').html());
                     $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
                     console.log("data: " + data.chosen_q_spin_val);
+                    let ptVals = [10, 20, 30, 40, 50]
+                    ptVals.forEach(function (item, index) {
+                        $("#pt-val-" + item.toString()).hide();
+                        $("#pt-val-lb-" + item.toString()).hide();
+                    });
+                    data.qPointValues.forEach(function (item, index) {
+                        $("#pt-val-" + item.toString()).show();
+                        $("#pt-val-lb-" + item.toString()).show();
+                    });
                 } else {
                     // render a different screen for a person who is not the current player
                     $('#game-area').html($('#wheel-template-alt').html());

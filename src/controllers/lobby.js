@@ -27,6 +27,21 @@ router.post(`/`, (req, res) => {
     } else if (buttonPressed == "join") {
         // Go back
         res.render('join', {username})
+    } else if (buttonPressed == "view-profile") {
+        res.render('profile', {username});
+    } else if (buttonPressed == "logout") {
+        res.redirect('/logout')
+    } else {
+        console.log("User did not press any buttons on the register page.");
+    }
+});
+
+/* POST view profile page */
+router.post(`/profile`, (req, res) => {
+    var buttonPressed = req.body.button;
+
+    if (buttonPressed == "back") {
+        res.redirect('/lobby');
     } else if (buttonPressed == "logout") {
         res.redirect('/logout')
     } else {

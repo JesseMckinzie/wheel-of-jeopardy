@@ -6,7 +6,7 @@
 body {
   height: 100vh;
   width: 100%;
-  background-color: #fd84fd;
+  background:linear-gradient(to right top, #E0FFC6 0, #83FFC8 25%, #61EBFE 50%, #FC83FC 100%);
 }
 .container {
   display: flex;
@@ -28,17 +28,68 @@ body {
 }
 .logo {
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
   position: absolute;
   top: -75px;
   left: 10px;
 }
-.logo img{
-  height: 150px;
+#wheel-logo {
+  height: 100px;
+  width: auto;  
+  margin: 0 -30px 0 -120px;
+}
+#sun-logo {
+  position: inherit;
+  height: 300px;
   width: auto;
+  z-index: -1;
+  margin: -80px 0 0 -40px;
+}
+#text-logo {
+  height: 125px;
+  width: auto;
+  margin: 0 0 0 -40px;
+}
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+  from {
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes rotating {
+  from {
+    -ms-transform: rotate(0deg);
+    -moz-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    -o-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360deg);
+    -moz-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    -o-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+.rotating {
+  -webkit-animation: rotating 2s linear infinite;
+  -moz-animation: rotating 2s linear infinite;
+  -ms-animation: rotating 2s linear infinite;
+  -o-animation: rotating 2s linear infinite;
+  animation: rotating 2s linear infinite;
 }
 .login, .register {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 75%;
 }
 .form-group {

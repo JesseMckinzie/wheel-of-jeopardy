@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Host</title>
+    <title>Lobby</title>
     <link rel="stylesheet" href="/stylesheets/authe.css">
 </head>
 <body>
@@ -15,30 +15,21 @@
         <img src="/img/wheel_logo.svg" id="wheel-logo" class="rotating" alt="logo">
         <img src="/img/logo_alt.svg" id="text-logo" alt="logo">
       </div>
-      <form class="login" action="/lobby/host_api" method="POST">
+      <form class="login" action="/lobby/profile" method="POST">
         <div class="form-group">
-          <p white-space="pre"> l o g g e d  i n  a s  {{username}}</p>
-        </div>
-        <div class="form-group">
-          <input type="text" name="game_id" placeholder={{thisGameId}} id="game_id" class="form-control" readonly>
-        </div>
-        <div class="form-group">
-          <input type="text" name="passcode" placeholder="s e t  p a s s c o d e" id="passcode" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="text" name="game_length" placeholder="s e t  g a m e  l e n g t h" id="game_length" class="form-control">
-        </div>
-        <div class="form-group">
-          <button class="full-btn" name="button" value="create" id="create-btn"> c r e a t e  g a m e</button>
+          <p white-space="pre" style="margin-left: 55px;"> l o g g e d  i n  a s  {{username}}</p>
         </div>
         <div class="form-group">
           <button class="full-btn" name="button" value="back"> b a c k</button>
+        </div>                
+        <div class="form-group">
+          <button class="full-btn" name="button" value="logout"> l o g  o u t</button>
         </div>
       </form>
       <div class="disclaimer">
         <p>&copy i m p o r t  t e a m N a m e  2 0 2 1</p>
       </div>
     </div>
-  </div>
+  </div>  
 </body>
 </html>
