@@ -267,13 +267,32 @@ button, input[type="radio"], .pt-val-lb {
   background-color: #e8e8d8;
   animation: display 0.2s;
   animation-fill-mode: forwards;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
+.choose-replay {
+  background: white;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  background-color: #e8e8d8;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 .question-container {
   background: white;
   background-color: #e8e8d8;
   width: 50%;
   font-size: 20px;
+}
+#choose-replay-yes-btn, #choose-replay-no-btn {
+  background-color: #e8e8d8;
+  padding: 7px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin-left: 10px;
 }
 
 button.close-button {
@@ -301,16 +320,18 @@ button.close-button {
 }
 
 #video-lost-pts {
-  height: 150px;
-  width: 150px;
+  height: 300px;
+  width: 300px;
   position: absolute;
   bottom: 20%;
   right: 10%;
 }
 
 #video-got-pts {
-  height: 650px;
-  width: 1300px;
+  /* height: 650px;
+  width: 1300px; */
+  height: 325px;
+  width: 650px;
   z-index: 10;
   position: absolute;
   bottom: 0;

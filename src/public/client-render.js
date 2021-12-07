@@ -109,12 +109,12 @@ jQuery(function($){
             });         
             // CLIENT: Render points won or lost animation
             IO.socket.on('play-pts-anim', (data) => {
-                if (App.currentPlayer) {
-                    if (data.status == "won") {
-                        $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/no-scope-low-res.gif" alt="current-profile-pic">');
-                    } else if (data.status == "lost") {
-                        $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/thanos.gif" alt="current-profile-pic">');
-                    };
+                if (data.status == "won") {
+                    $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/gif/' + App.wonGifs[App.wonGiftIndex] + '" alt="current-profile-pic">');
+                    App.wonGiftIndex = (App.wonGiftIndex + 1) % App.wonGifs.length;
+                } else if (data.status == "lost") {
+                    $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/gif/' + App.lostGifs[App.lostGifIndex] + '" alt="current-profile-pic">');
+                    App.lostGifIndex = (App.lostGifIndex + 1) % App.lostGifs.length;
                 };
             });                       
         }
@@ -132,6 +132,10 @@ jQuery(function($){
         timeQuestionDisplayed: new Date().getTime(),
         gameStarted: false,
         refreshIntervalId: '',
+        wonGifs: ['no-scope-low-res.gif', 'kermit.gif', 'yeah-bwoi.gif', 'cat-vibin.gif', 'frog.gif', 'freak-out.gif'],
+        wonGiftIndex: 0,
+        lostGifs: ['thanos.gif', 'really.gif', 'old-man-falling.gif', '2mad.gif', 'arnold.gif', 'minecraft.gif'],
+        lostGifIndex: 0,
 
         init: function () {
             // JQuery stuff. Renders the main game
