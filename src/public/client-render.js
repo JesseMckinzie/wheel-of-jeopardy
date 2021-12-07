@@ -328,12 +328,6 @@ jQuery(function($){
             if (App.gameStarted) {
                 $('#game-area').html($('#game-over-template').html());
                 $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
-                // Why is this code here?
-                // Set the time that the question displayed
-                App.timeQuestionDisplayed = new Date().getTime();
-                App.questionDisplayed = true;
-                // No one is the current player until someone buzzes in
-                App.currentPlayer = false;
             };
         },
 
