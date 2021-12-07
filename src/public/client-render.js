@@ -80,10 +80,13 @@ jQuery(function($){
             // CLIENT: Start a 10-second timer for question & answer
             IO.socket.on('startTimerForQA', () => {
                 clearInterval(App.refreshIntervalId);
+                clearInterval(App.threeSecondCountdownID);
                 App.startTimer(10, $('#timer'));
             });            
             // CLIENT: Reset the wheel for the next round
             IO.socket.on('reset-wheel', () => {
+                clearInterval(App.tenSecondCountdownID);
+                $('#timer').text("00:00");
                 $('#game-area').html(App.$initWheel);
             });
             // CLIENT: Update scores
@@ -136,6 +139,9 @@ jQuery(function($){
         wonGiftIndex: 0,
         lostGifs: ['thanos.gif', 'really.gif', 'old-man-falling.gif', '2mad.gif', 'arnold.gif', 'minecraft.gif'],
         lostGifIndex: 0,
+        fiveSecondCountdownID: '',
+        threeSecondCountdownID: '',
+        tenSecondCountdownID: '',
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -278,7 +284,10 @@ jQuery(function($){
          */         
         onChooseQuestionVal: function() {
             if (App.gameStarted) {
-                App.startTimer(3, $('#timer'));
+                clearInterval(App.fiveSecondCountdownID);
+                clearInterval(App.tenSecondCountdownID);
+                $('#timer').text("00:03");
+                App.startTimer(2, $('#timer'));
                 if (App.currentPlayer) {
                     var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                     if (qVal) {
@@ -309,6 +318,8 @@ jQuery(function($){
                 $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
                 $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
                 $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
+                clearInterval(App.threeSecondCountdownID);
+                clearInterval(App.tenSecondCountdownID);
                 App.startTimer(5, $('#timer'));
             };
         },
@@ -388,7 +399,12 @@ jQuery(function($){
             // grab interval id if duration is 5 seconds to clear it for the 10 second countdown
             if (duration == 5) {
                 App.refreshIntervalId = refreshIntervalId;
-            }
+                App.fiveSecondCountdownID = refreshIntervalId;
+            } else if (duration == 2) {
+                App.threeSecondCountdownID = refreshIntervalId;
+            } else if (duration == 10) {
+                App.tenSecondCountdownID = refreshIntervalId;
+            };
         },
     };
 

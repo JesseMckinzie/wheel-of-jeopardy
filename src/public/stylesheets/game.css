@@ -256,7 +256,7 @@ button, input[type="radio"], .pt-val-lb {
 }
 .choose-q-val {
   background: white;
-  width: 30%;
+  width: 40%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -270,7 +270,12 @@ button, input[type="radio"], .pt-val-lb {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
+#choose-q-val-btn {
+  background-color: #e8e8d8;
+  text-align: center;
+  text-decoration: none;
+  padding: 3px;
+}
 .choose-replay {
   background: white;
   position: relative;

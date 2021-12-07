@@ -37,7 +37,7 @@ var currentScore = 0;
 var currentPoint = 0;
 var questionsReaming = -1;
 var gameStarted = false;
-const requiredNumPlayers = 3;
+const requiredNumPlayers = 1;
 var avaiPlayerRoles = [0, 1, 2];
 var chosenInd = -1;
 var hasSomeoneBuzzedIn = false;
@@ -402,13 +402,13 @@ const determineWinnerOfBuzzIn = () => {
       };
     }
     
-    setTimeout(sendQuestionDelay, 4000);
+    setTimeout(sendQuestionDelay, 3000);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
     hasSomeoneBuzzedIn = false;
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
-    displayTime = setTimeout(displayQuestionTimer, 8000);
+    displayTime = setTimeout(displayQuestionTimer, 10000);
   });
 
   // SERVER: Times everyone buzzing in
