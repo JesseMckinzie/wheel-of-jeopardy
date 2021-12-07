@@ -240,6 +240,10 @@ button, input[type="radio"], .pt-val-lb {
   background-color: #e8e8d8;
   animation: display 0.2s;
   animation-fill-mode: forwards;  
+  z-index: 10;
+}
+#choose-q-val-containerheader {
+  cursor: move;
 }
 .winning-msg-container {
   background: white;
@@ -288,6 +292,7 @@ button, input[type="radio"], .pt-val-lb {
 .question-container {
   background: white;
   background-color: #e8e8d8;
+  position: absolute;
   width: 50%;
   font-size: 20px;
 }
@@ -322,6 +327,7 @@ button.close-button {
   background-image: -webkit-linear-gradient(top, #602ba4, #c574ed);
   background-image: -webkit-linear-gradient(left, #0050e0, #3890f8);
   padding-left: 2px;
+  cursor: move;
 }
 
 #video-lost-pts {
