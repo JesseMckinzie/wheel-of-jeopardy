@@ -312,8 +312,8 @@ jQuery(function($){
         endGame: function(data){
             if (App.gameStarted) {
                 $('#game-area').html($('#game-over-template').html());
-                $('#message').append('<p/>').text(data.message);
                 $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
+                // Why is this code here?
                 // Set the time that the question displayed
                 App.timeQuestionDisplayed = new Date().getTime();
                 App.questionDisplayed = true;

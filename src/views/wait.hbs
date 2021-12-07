@@ -127,23 +127,23 @@
         <form action="" class="choose-q-val" id="choose-q-val">
           <div class="q-val-choice">
             <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
-            <label id="pt-val-lb-10" for="pt-val-10">10</label>
+            <label class="pt-val-lb" id="pt-val-lb-10" for="pt-val-10">10</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
-            <label id="pt-val-lb-20" for="pt-val-20">20</label>
+            <label class="pt-val-lb" id="pt-val-lb-20" for="pt-val-20">20</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
-            <label id="pt-val-lb-30" for="pt-val-30">30</label>
+            <label class="pt-val-lb" id="pt-val-lb-30" for="pt-val-30">30</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
-            <label id="pt-val-lb-40" for="pt-val-40">40</label>
+            <label class="pt-val-lb" id="pt-val-lb-40" for="pt-val-40">40</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
-            <label id="pt-val-lb-50" for="pt-val-50">50</label>
+            <label class="pt-val-lb" id="pt-val-lb-50" for="pt-val-50">50</label>
           </div><br>
           <button type="button" id="choose-q-val-btn"> c h o o s e </button>
         </form>
@@ -173,10 +173,13 @@
   </script>
 
   <script id="game-over-template" type="text/template">
-    <div class="question-container">
-      <p id="message"></p>
-      <p id="winner"></p>
-    </div>  
+      <div class="winning-msg-container" id="winning-msg-box" draggable="true">
+        <div class="title">
+          Game Over!
+          <button type="button" class="close-button">X</button>
+        </div>
+        <p id="winner"></p>
+      </div>
   </script>
   <!-- jQuery! -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

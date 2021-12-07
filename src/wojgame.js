@@ -68,11 +68,24 @@ const getQuestions = async(gameLength) => {
 
 const getWinnerIdx = (array) =>{
   var max = -Number.MAX_VALUE;
-  var maxIdx = 0;
+  var maxIdx = [];
+  var temp = -1;
 
-  for(var i = 0; i < players.length; ++i){
-    if(playerScores[i] > max) maxIdx = i;
+  for(var i = 0; i < array.length; i++){
+    if(array[i] > max) {
+      temp = i;
+      max = array[i];
+    };
   }
+  maxIdx.push(temp);
+  // check to see if there are ties
+  if (array.length > 1) {
+    for(var i = 0; i < array.length; i++){
+      if(i != temp && (array[i] == array[temp])) {
+        maxIdx.push(i);
+      };
+    }
+  };
   return maxIdx;
 }
 
@@ -504,10 +517,48 @@ const determineWinnerOfBuzzIn = () => {
     io.emit('chat-message-bounce', {username: "System", msg: `There are ${questionsReaming} questions remaining.`});
     if(questionsReaming === 0){
       const winner = {}
-      winner.winner = players[getWinnerIdx(playerScores)].username;
+      winner.winners = getWinnerIdx(playerScores);
+      console.log(winner.winners)
+      winner.winner = "";
+      if (winner.winners.length == 1) {
+        winner.winner = players[winner.winners[0]].username;
+      } else if (winner.winners.length > 1) {
+        winner.winners.forEach(function (item, index) {
+          winner.winner = winner.winner + players[item].username + " and ";
+        });
+        winner.winner = winner.winner.substring(0, winner.winner.length - 5);
+      };
       winner.message = "Game over!"
       io.emit('chat-message-bounce', {username: "System", msg: `The winner is ${winner.winner}!`});
-      io.emit('game-end', winner)
+      io.emit('game-end', winner)     
+      // flush all variables
+      numOfActivePlayers = 0;
+      players = [];
+      currentPlayer = 0;
+      curRound = 1;
+      questions = {};
+      gameInit = false;
+      qPointValues = {};
+      gameInfo = {};
+      playersBuzzedTime = [];
+      playerScores = [0,0,0];
+      currentScore = 0;
+      currentPoint = 0;
+      questionsReaming = -1;
+      gameStarted = false;
+      avaiPlayerRoles = [0, 1, 2];
+      hasSomeoneBuzzedIn = false;
+      gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+      if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
+      else categoriesIds = [17, 21, 10, 11, 12, 22];
+      gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
+      chosenInd = -1;
+      // Reset wheel image
+      fs.readFile("public/img/wheel.svg", "utf-8", function(err, data) {
+        fs.writeFile("public/img/wheel3.svg", data, function(err, data) {
+          if (err) console.log(err);
+        });
+      });      
     } else {
       io.emit('reset-wheel');
       io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
@@ -546,13 +597,15 @@ const determineWinnerOfBuzzIn = () => {
       console.log(players);
       io.emit('chat-message-bounce', {username: "System", msg: `${loggedOutPlayer} just left the game.`});
       // flush all game variables
-      if (players.length < 1) {
+      if (players.length < 1 && questionsReaming > 0) {
+        players = [];
         numOfActivePlayers = 0;
         currentPlayer = 0;
         curRound = 1;
-        var questions;
+        questions = {};
         gameInit = false;
-        var gameInfo;
+        qPointValues = {};
+        gameInfo = {};
         playersBuzzedTime = [];
         playerScores = [0,0,0];
         currentScore = 0;
@@ -562,6 +615,10 @@ const determineWinnerOfBuzzIn = () => {
         avaiPlayerRoles = [0, 1, 2];
         hasSomeoneBuzzedIn = false;
         chosenInd = -1;
+        gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+        if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
+        else categoriesIds = [17, 21, 10, 11, 12, 22];
+        gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
         // Reset wheel image
         fs.readFile("public/img/wheel.svg", "utf-8", function(err, data) {
           fs.writeFile("public/img/wheel3.svg", data, function(err, data) {

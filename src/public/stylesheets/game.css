@@ -13,6 +13,9 @@ body {
   width: 100%;
   position: relative;
 }
+button, input[type="radio"], .pt-val-lb {
+  cursor: pointer;
+}
 
 .chat-container {
   background: white; 
@@ -235,11 +238,22 @@ body {
   top: 43%;
   right: 5%;
   background-color: #e8e8d8;
-  cursor: move;
   animation: display 0.2s;
   animation-fill-mode: forwards;  
 }
-
+.winning-msg-container {
+  background: white;
+  border: 1px outset #dedede;
+  width: 20%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8e8d8;
+  animation: display 0.2s;
+  animation-fill-mode: forwards;  
+}
 .choose-q-val {
   background: white;
   width: 30%;
@@ -251,7 +265,6 @@ body {
   top: 43%;
   right: 5%;
   background-color: #e8e8d8;
-  cursor: move;
   animation: display 0.2s;
   animation-fill-mode: forwards;
 }
