@@ -18,6 +18,8 @@ module.exports = (sequelize, DataTypes) => {
     email: DataTypes.STRING,
     gameId: DataTypes.INTEGER,
     cumulativeScore: DataTypes.INTEGER,
+    highScore: DataTypes.INTEGER,
+    gamesPlayed: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'User',

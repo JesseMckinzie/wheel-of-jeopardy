@@ -19,11 +19,22 @@ module.exports = {
         unique: true,
       },
       gameId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: -1
       },
       cumulativeScore: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      highScore: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
+      },
+      gamesPlayed: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       }
+
       // createdAt: {
       //   allowNull: false,
       //   type: Sequelize.DATE,

@@ -80,10 +80,13 @@ jQuery(function($){
             // CLIENT: Start a 10-second timer for question & answer
             IO.socket.on('startTimerForQA', () => {
                 clearInterval(App.refreshIntervalId);
+                clearInterval(App.threeSecondCountdownID);
                 App.startTimer(10, $('#timer'));
             });            
             // CLIENT: Reset the wheel for the next round
             IO.socket.on('reset-wheel', () => {
+                clearInterval(App.tenSecondCountdownID);
+                $('#timer').text("00:00");
                 $('#game-area').html(App.$initWheel);
             });
             // CLIENT: Update scores
@@ -109,12 +112,12 @@ jQuery(function($){
             });         
             // CLIENT: Render points won or lost animation
             IO.socket.on('play-pts-anim', (data) => {
-                if (App.currentPlayer) {
-                    if (data.status == "won") {
-                        $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/no-scope-low-res.gif" alt="current-profile-pic">');
-                    } else if (data.status == "lost") {
-                        $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/thanos.gif" alt="current-profile-pic">');
-                    };
+                if (data.status == "won") {
+                    $('.wheel-container').append('<img class="video" id="video-got-pts" src="/img/gif/' + App.wonGifs[App.wonGiftIndex] + '" alt="current-profile-pic">');
+                    App.wonGiftIndex = (App.wonGiftIndex + 1) % App.wonGifs.length;
+                } else if (data.status == "lost") {
+                    $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/gif/' + App.lostGifs[App.lostGifIndex] + '" alt="current-profile-pic">');
+                    App.lostGifIndex = (App.lostGifIndex + 1) % App.lostGifs.length;
                 };
             });                       
         }
@@ -132,6 +135,13 @@ jQuery(function($){
         timeQuestionDisplayed: new Date().getTime(),
         gameStarted: false,
         refreshIntervalId: '',
+        wonGifs: ['no-scope-low-res.gif', 'kermit.gif', 'yeah-bwoi.gif', 'cat-vibin.gif', 'frog.gif', 'freak-out.gif'],
+        wonGiftIndex: 0,
+        lostGifs: ['thanos.gif', 'really.gif', 'old-man-falling.gif', '2mad.gif', 'arnold.gif', 'minecraft.gif'],
+        lostGifIndex: 0,
+        fiveSecondCountdownID: '',
+        threeSecondCountdownID: '',
+        tenSecondCountdownID: '',
 
         init: function () {
             // JQuery stuff. Renders the main game
@@ -251,6 +261,15 @@ jQuery(function($){
                     $('#game-area').html($('#wheel-template').html());
                     $("#wheel-img").css("animation", "spin-".concat(data.chosen_q_spin_val, " 1s forwards"));
                     console.log("data: " + data.chosen_q_spin_val);
+                    let ptVals = [10, 20, 30, 40, 50]
+                    ptVals.forEach(function (item, index) {
+                        $("#pt-val-" + item.toString()).hide();
+                        $("#pt-val-lb-" + item.toString()).hide();
+                    });
+                    data.qPointValues.forEach(function (item, index) {
+                        $("#pt-val-" + item.toString()).show();
+                        $("#pt-val-lb-" + item.toString()).show();
+                    });
                 } else {
                     // render a different screen for a person who is not the current player
                     $('#game-area').html($('#wheel-template-alt').html());
@@ -265,7 +284,10 @@ jQuery(function($){
          */         
         onChooseQuestionVal: function() {
             if (App.gameStarted) {
-                App.startTimer(3, $('#timer'));
+                clearInterval(App.fiveSecondCountdownID);
+                clearInterval(App.tenSecondCountdownID);
+                $('#timer').text("00:03");
+                App.startTimer(2, $('#timer'));
                 if (App.currentPlayer) {
                     var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                     if (qVal) {
@@ -296,6 +318,8 @@ jQuery(function($){
                 $('#cur-player-0').replaceWith( "<p id='cur-player-0' hidden>c u r r e n t  p l a y e r</p>");
                 $('#cur-player-1').replaceWith( "<p id='cur-player-1' hidden>c u r r e n t  p l a y e r</p>");
                 $('#cur-player-2').replaceWith( "<p id='cur-player-2' hidden>c u r r e n t  p l a y e r</p>");
+                clearInterval(App.threeSecondCountdownID);
+                clearInterval(App.tenSecondCountdownID);
                 App.startTimer(5, $('#timer'));
             };
         },
@@ -303,13 +327,7 @@ jQuery(function($){
         endGame: function(data){
             if (App.gameStarted) {
                 $('#game-area').html($('#game-over-template').html());
-                $('#message').append('<p/>').text(data.message);
                 $('#winner').append('<p/>').text('The winner is '.concat(data.winner, '!'));
-                // Set the time that the question displayed
-                App.timeQuestionDisplayed = new Date().getTime();
-                App.questionDisplayed = true;
-                // No one is the current player until someone buzzes in
-                App.currentPlayer = false;
             };
         },
 
@@ -375,7 +393,12 @@ jQuery(function($){
             // grab interval id if duration is 5 seconds to clear it for the 10 second countdown
             if (duration == 5) {
                 App.refreshIntervalId = refreshIntervalId;
-            }
+                App.fiveSecondCountdownID = refreshIntervalId;
+            } else if (duration == 2) {
+                App.threeSecondCountdownID = refreshIntervalId;
+            } else if (duration == 10) {
+                App.tenSecondCountdownID = refreshIntervalId;
+            };
         },
     };
 

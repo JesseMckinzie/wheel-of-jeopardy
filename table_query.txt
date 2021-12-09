@@ -1,3 +1,4 @@
+--Create database
 USE applications;
 
 CREATE TABLE users(
@@ -6,3 +7,10 @@ CREATE TABLE users(
    email VARCHAR(40) NOT NULL UNIQUE,
    PRIMARY KEY ( id )
 );
+
+--Add new columns
+
+USE applications;
+
+ALTER TABLE users ADD(highScore INT DEFAULT 0);
+ALTER TABLE users ADD(gamesPlayed INT DEFAULT 0);

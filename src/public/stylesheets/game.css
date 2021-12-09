@@ -6,12 +6,15 @@
 body {
   height: 100vh;
   width: 100%;
-  background-color: #fd84fd;
+  background:linear-gradient(to right top, #E0FFC6 0, #83FFC8 33%, #61EBFE 66%, #FC83FC 100%);
 }
 .container {
   height: 100%;
   width: 100%;
   position: relative;
+}
+button, input[type="radio"], .pt-val-lb {
+  cursor: pointer;
 }
 
 .chat-container {
@@ -96,6 +99,8 @@ body {
   font-size: 16px;  
   height: 50%;
   border-radius: 50%;
+  margin-bottom: 30px;
+  margin-right: 15px;
 }
 
 .player-btns-container {
@@ -233,14 +238,29 @@ body {
   top: 43%;
   right: 5%;
   background-color: #e8e8d8;
+  animation: display 0.2s;
+  animation-fill-mode: forwards;  
+  z-index: 10;
+}
+#choose-q-val-containerheader {
   cursor: move;
+}
+.winning-msg-container {
+  background: white;
+  border: 1px outset #dedede;
+  width: 20%;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8e8d8;
   animation: display 0.2s;
   animation-fill-mode: forwards;  
 }
-
 .choose-q-val {
   background: white;
-  width: 30%;
+  width: 40%;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -249,16 +269,40 @@ body {
   top: 43%;
   right: 5%;
   background-color: #e8e8d8;
-  cursor: move;
   animation: display 0.2s;
   animation-fill-mode: forwards;
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
-
+#choose-q-val-btn {
+  background-color: #e8e8d8;
+  text-align: center;
+  text-decoration: none;
+  padding: 3px;
+}
+.choose-replay {
+  background: white;
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  background-color: #e8e8d8;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
 .question-container {
   background: white;
   background-color: #e8e8d8;
+  position: absolute;
   width: 50%;
   font-size: 20px;
+}
+#choose-replay-yes-btn, #choose-replay-no-btn {
+  background-color: #e8e8d8;
+  padding: 7px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 16px;
+  margin-left: 10px;
 }
 
 button.close-button {
@@ -283,19 +327,22 @@ button.close-button {
   background-image: -webkit-linear-gradient(top, #602ba4, #c574ed);
   background-image: -webkit-linear-gradient(left, #0050e0, #3890f8);
   padding-left: 2px;
+  cursor: move;
 }
 
 #video-lost-pts {
-  height: 150px;
-  width: 150px;
+  height: 300px;
+  width: 300px;
   position: absolute;
   bottom: 20%;
   right: 10%;
 }
 
 #video-got-pts {
-  height: 650px;
-  width: 1300px;
+  /* height: 650px;
+  width: 1300px; */
+  height: 325px;
+  width: 650px;
   z-index: 10;
   position: absolute;
   bottom: 0;

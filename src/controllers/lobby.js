@@ -4,6 +4,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const url = require('url');
 const alert = require('alert'); 
+const { REPL_MODE_SLOPPY } = require("repl");
+const User = require("../models").User;
+const { token } = require("morgan");
 
 let gameIds = [0] // list to hold all game IDs
 var games = {}; // dictionary to hold all active game IDs and passcode
@@ -27,6 +30,41 @@ router.post(`/`, (req, res) => {
     } else if (buttonPressed == "join") {
         // Go back
         res.render('join', {username})
+    } else if (buttonPressed == "view-profile") {
+        const user = req.user.username;
+        const mail = req.user.email;
+        var cumulativeScore, highScore, gamesPlayed;
+        User.findOne({
+            where: {
+                username: user,
+                email: mail
+            },
+        }).then((user) => {
+            if(user){
+                //console.log(user);
+    
+                cumulativeScore = user.cumulativeScore;
+                highScore = user.highScore;
+                gamesPlayed = user.gamesPlayed;
+    
+            } else{ 
+                alert("Error retrieving user info.");
+            }
+        }).then(() => {
+            res.render('profile', {username, mail, gamesPlayed});
+        });
+    } else if (buttonPressed == "logout") {
+        res.redirect('/logout')
+    } else {
+        console.log("User did not press any buttons on the register page.");
+    }
+});
+
+/* POST view profile page */
+router.post(`/profile`, (req, res) => {    
+
+    if (buttonPressed == "back") {
+        res.redirect('/');
     } else if (buttonPressed == "logout") {
         res.redirect('/logout')
     } else {

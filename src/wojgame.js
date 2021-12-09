@@ -1,6 +1,7 @@
 var io;
 var gameSocket;
 const axios = require('axios');
+const User = require("./models").User;
 var fs = require('fs');
 parseString = require("xml2js").parseString;
 xml2js = require("xml2js");
@@ -10,8 +11,8 @@ var players = [];
 var numOfActivePlayers = players.length;
 var currentPlayer = 0;
 var curRound = 1;
-//var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
-var gameCategories = ["Science", "Sports", "Literature", "Film", "Music", "Geography"];
+var gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+//var gameCategories = ["Science", "Sports", "Literature", "Film", "Music", "Geography"];
 var gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
 var categoriesIds;
 if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
@@ -25,6 +26,8 @@ var categories = [
   {id: 25, name: "Art", spinValue:210},
   {id: 12, name: "Music", spinValue:180},
   {id: 22, name: "Geography", spinValue:150}];
+// array to hold the number of point values we have left per question
+var qPointValues = {};
 //const questions = {"response_code":0,"results":[{"category":"History","type":"multiple","difficulty":"easy","question":"The%20original%20Roman%20alphabet%20lacked%20the%20following%20letters%20EXCEPT%3A","correct_answer":"X","incorrect_answers":["W","U","J"]},{"category":"Science%20%26%20Nature","type":"multiple","difficulty":"hard","question":"Which%20moon%20is%20the%20only%20satellite%20in%20our%20solar%20system%20to%20possess%20a%20dense%20atmosphere%3F","correct_answer":"Titan","incorrect_answers":["Europa","Miranda","Callisto"]},{"category":"Entertainment%3A%20Video%20Games","type":"multiple","difficulty":"medium","question":"In%20Terraria%2C%20what%20does%20the%20Wall%20of%20Flesh%20not%20drop%20upon%20defeat%3F","correct_answer":"Picksaw","incorrect_answers":["Pwnhammer","Breaker%20Blade","Laser%20Rifle"]},{"category":"Geography","type":"multiple","difficulty":"easy","question":"How%20many%20stars%20are%20featured%20on%20New%20Zealand%27s%20flag%3F","correct_answer":"4","incorrect_answers":["5","2","0"]},{"category":"Entertainment%3A%20Television","type":"multiple","difficulty":"hard","question":"In%20%22Star%20Trek%22%2C%20who%20was%20the%20founder%20of%20the%20Klingon%20Empire%20and%20its%20philosophy%3F","correct_answer":"Kahless%20the%20Unforgettable","incorrect_answers":["Lady%20Lukara%20of%20the%20Great%20Hall","Molor%20the%20Unforgiving","Dahar%20Master%20Kor"]}]};
 var questions;
 var gameInit = false; // has the game been created yet?
@@ -66,11 +69,24 @@ const getQuestions = async(gameLength) => {
 
 const getWinnerIdx = (array) =>{
   var max = -Number.MAX_VALUE;
-  var maxIdx = 0;
+  var maxIdx = [];
+  var temp = -1;
 
-  for(var i = 0; i < players.length; ++i){
-    if(playerScores[i] > max) maxIdx = i;
+  for(var i = 0; i < array.length; i++){
+    if(array[i] > max) {
+      temp = i;
+      max = array[i];
+    };
   }
+  maxIdx.push(temp);
+  // check to see if there are ties
+  if (array.length > 1) {
+    for(var i = 0; i < array.length; i++){
+      if(i != temp && (array[i] == array[temp])) {
+        maxIdx.push(i);
+      };
+    }
+  };
   return maxIdx;
 }
 
@@ -270,6 +286,13 @@ const determineWinnerOfBuzzIn = () => {
         questions = await myPromise;
       }
       awaitQuestions();
+      // give each category a set of question point values
+      gameCategories.forEach(function (item, index) {
+        qPointValues[item] = []
+        for (i = 1; i <= data.gameLength / 6; i++) {
+          qPointValues[item].push(i * 10);
+        };
+      });
       // Notify everyone in the room that the game has been created
       io.emit('chat-message-bounce', {
         username: "System", 
@@ -330,7 +353,7 @@ const determineWinnerOfBuzzIn = () => {
     console.log(gameCategories)
     chosenInd = Math.floor(Math.random()*gameCategories.length);
     chosenQCat = gameCategories[chosenInd];
-    io.emit('getQuestionCategory', {chosen_q : chosenQCat, chosen_q_spin_val : gameCategoriesSpinValues[chosenInd]});
+    io.emit('getQuestionCategory', {chosen_q : chosenQCat, chosen_q_spin_val : gameCategoriesSpinValues[chosenInd], qPointValues: qPointValues[chosenQCat]});
     // Notify everyone in the room that a user spun the wheel
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} just spun the wheel.`});
     // Notify everyone in the room of the current question category
@@ -351,6 +374,12 @@ const determineWinnerOfBuzzIn = () => {
       };
     }); */
     chosenQ = getSingleQuestion(chosenInd, questions);
+    qPointValues[chosenQCat].forEach(function (item, index) {
+      if (item == data.qVal) {
+        qPointValues[chosenQCat].splice(index, 1);
+      };
+    });
+    console.log(qPointValues[chosenQCat]);
     
     // Delay 3 seconds before sending question
     function sendQuestionDelay() {
@@ -374,13 +403,13 @@ const determineWinnerOfBuzzIn = () => {
       };
     }
     
-    setTimeout(sendQuestionDelay, 4000);
+    setTimeout(sendQuestionDelay, 3000);
     // Notify everyone in the room of the chosen question point value
     io.emit('chat-message-bounce', {username: "System", msg: `${data.username} has chosen a point value of ${data.qVal}`});
     hasSomeoneBuzzedIn = false;
     currentPoint = data.qVal;
     //io.emit('update-room-info', players);
-    displayTime = setTimeout(displayQuestionTimer, 8000);
+    displayTime = setTimeout(displayQuestionTimer, 10000);
   });
 
   // SERVER: Times everyone buzzing in
@@ -489,10 +518,50 @@ const determineWinnerOfBuzzIn = () => {
     io.emit('chat-message-bounce', {username: "System", msg: `There are ${questionsReaming} questions remaining.`});
     if(questionsReaming === 0){
       const winner = {}
-      winner.winner = players[getWinnerIdx(playerScores)].username;
+      winner.winners = getWinnerIdx(playerScores);
+      console.log(winner.winners)
+      winner.winner = "";
+      if (winner.winners.length == 1) {
+        winner.winner = players[winner.winners[0]].username;
+      } else if (winner.winners.length > 1) {
+        winner.winners.forEach(function (item, index) {
+          winner.winner = winner.winner + players[item].username + " and ";
+        });
+        winner.winner = winner.winner.substring(0, winner.winner.length - 5);
+      };
       winner.message = "Game over!"
       io.emit('chat-message-bounce', {username: "System", msg: `The winner is ${winner.winner}!`});
-      io.emit('game-end', winner)
+      io.emit('game-end', winner)   
+      
+      updateDatabase(playerScores);  
+      // flush all variables
+      numOfActivePlayers = 0;
+      players = [];
+      currentPlayer = 0;
+      curRound = 1;
+      questions = {};
+      gameInit = false;
+      qPointValues = {};
+      gameInfo = {};
+      playersBuzzedTime = [];
+      playerScores = [0,0,0];
+      currentScore = 0;
+      currentPoint = 0;
+      questionsReaming = -1;
+      gameStarted = false;
+      avaiPlayerRoles = [0, 1, 2];
+      hasSomeoneBuzzedIn = false;
+      gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+      if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
+      else categoriesIds = [17, 21, 10, 11, 12, 22];
+      gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
+      chosenInd = -1;
+      // Reset wheel image
+      fs.readFile("public/img/wheel.svg", "utf-8", function(err, data) {
+        fs.writeFile("public/img/wheel3.svg", data, function(err, data) {
+          if (err) console.log(err);
+        });
+      });      
     } else {
       io.emit('reset-wheel');
       io.emit('remove-slice-from-wheel', {src: "/img/wheel3.svg"});
@@ -531,13 +600,15 @@ const determineWinnerOfBuzzIn = () => {
       console.log(players);
       io.emit('chat-message-bounce', {username: "System", msg: `${loggedOutPlayer} just left the game.`});
       // flush all game variables
-      if (players.length < 1) {
+      if (players.length < 1 && questionsReaming > 0) {
+        players = [];
         numOfActivePlayers = 0;
         currentPlayer = 0;
         curRound = 1;
-        var questions;
+        questions = {};
         gameInit = false;
-        var gameInfo;
+        qPointValues = {};
+        gameInfo = {};
         playersBuzzedTime = [];
         playerScores = [0,0,0];
         currentScore = 0;
@@ -547,8 +618,12 @@ const determineWinnerOfBuzzIn = () => {
         avaiPlayerRoles = [0, 1, 2];
         hasSomeoneBuzzedIn = false;
         chosenInd = -1;
+        gameCategories = ["Science", "Sports", "Literature", "Film", "History", "Art"];
+        if (gameCategories[gameCategories.length-1] === "Art") categoriesIds = [17, 21, 10, 11, 23, 25];
+        else categoriesIds = [17, 21, 10, 11, 12, 22];
+        gameCategoriesSpinValues = [360, 330, 300, 270, 240, 210];
         // Reset wheel image
-        fs.readFile("public/img/wheel2.svg", "utf-8", function(err, data) {
+        fs.readFile("public/img/wheel.svg", "utf-8", function(err, data) {
           fs.writeFile("public/img/wheel3.svg", data, function(err, data) {
             if (err) console.log(err);
           });
@@ -572,4 +647,32 @@ const determineWinnerOfBuzzIn = () => {
     //io.emit("playerJoinedGame", players);
     //PUSH TEST - MORGAN
   });
+}
+
+const updateDatabase = (scores) => {
+  for(var i = 0; i < players.length; ++i){
+    User.findOne({
+      where: {
+          username: players[i].username
+      },
+    }).then((user) => {
+        if(user){
+            var newScore = user.cumulativeScore + scores[i];
+            var newGamesPlayed = user.gamesPlayed + 1;
+
+            user.update({
+              cumulativeScore: newScore,
+              gamesPlayed: newGamesPlayed
+              
+            })
+            if(scores[i] > user.highScore){
+              user.update({
+                highScore: scores[i]
+              })
+            }
+        } else{ 
+          console.log("Error updating user info.")
+        }
+    })
+  }
 }

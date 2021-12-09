@@ -119,36 +119,81 @@
     <div class="wheel-container">
       <img id="wheel-img" src="/img/wheel3.svg" alt="current-profile-pic">
       <div id="triangle"></div>
-      <div class="choose-q-val-container" draggable="true">
-        <div class="title">
+      <div class="choose-q-val-container" id="choose-q-val-container" draggable="True">
+        <div class="title" id="choose-q-val-containerheader">
           Choose a point value
           <button type="button" class="close-button">X</button>
         </div>
         <form action="" class="choose-q-val" id="choose-q-val">
           <div class="q-val-choice">
             <input type="radio" id="pt-val-10" name="pt-val-radio-btn" value="10">
-            <label for="pt-val-10">10</label>
+            <label class="pt-val-lb" id="pt-val-lb-10" for="pt-val-10">10</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-20" name="pt-val-radio-btn" value="20">
-            <label for="pt-val-20">20</label>
+            <label class="pt-val-lb" id="pt-val-lb-20" for="pt-val-20">20</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-30" name="pt-val-radio-btn" value="30">
-            <label for="pt-val-30">30</label>
+            <label class="pt-val-lb" id="pt-val-lb-30" for="pt-val-30">30</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-40" name="pt-val-radio-btn" value="40">
-            <label for="pt-val-40">40</label>
+            <label class="pt-val-lb" id="pt-val-lb-40" for="pt-val-40">40</label>
           </div><br>
           <div class="q-val-choice">
             <input type="radio" id="pt-val-50" name="pt-val-radio-btn" value="50">
-            <label for="pt-val-50">50</label>
+            <label class="pt-val-lb" id="pt-val-lb-50" for="pt-val-50">50</label>
           </div><br>
           <button type="button" id="choose-q-val-btn"> c h o o s e </button>
         </form>
       </div>      
     </div>
+    <script>
+      // Make the DIV element draggable:
+      dragElement(document.getElementById("choose-q-val-container"));
+
+      function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+          // if present, the header is where you move the DIV from:
+          document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+          // otherwise, move the DIV from anywhere inside the DIV:
+          elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          // set the element's new position:
+          elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+          elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+          // stop moving when mouse button is released:
+          document.onmouseup = null;
+          document.onmousemove = null;
+        }
+      }          
+    </script>    
   </script>
 
   <script id="wheel-template-alt" type="text/template">
@@ -159,9 +204,9 @@
   </script>  
 
   <script id="question-template" type="text/template">
-    <div class="question-container">
-        <div class="title">
-          Choose a point value
+    <div class="question-container" id="question-container" draggable="True">
+        <div class="title" id="question-containerheader">
+          Choose an answer
           <button type="button" class="close-button">X</button>
         </div>
       <p id="question"></p>
@@ -169,14 +214,112 @@
       <label id="answer_b" for="answer_b">b )  {{answerB}}</label><br>
       <label id="answer_c" for="answer_c">c )  {{answerC}}</label><br>
       <label id="answer_d" for="answer_d">d )  {{answerD}}</label><br>
-    </div>  
+    </div>
+    <script>
+      // Make the DIV element draggable:
+      dragElement(document.getElementById("question-container"));
+
+      function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+          // if present, the header is where you move the DIV from:
+          document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+          // otherwise, move the DIV from anywhere inside the DIV:
+          elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          // set the element's new position:
+          elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+          elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+          // stop moving when mouse button is released:
+          document.onmouseup = null;
+          document.onmousemove = null;
+        }
+      }          
+    </script>      
   </script>
 
   <script id="game-over-template" type="text/template">
-    <div class="question-container">
-      <p id="message"></p>
+    <div class="winning-msg-container" id="winning-msg-box" draggable="true">
+      <div class="title" id="winning-msg-boxheader">
+        Game Over!
+        <button type="button" class="close-button">X</button>
+      </div>
       <p id="winner"></p>
-    </div>  
+      <p>Do you want to play again?</p>
+      <form action="" class="choose-replay" id="choose-replay">
+        <button type="button" id="choose-replay-yes-btn" style="margin-top: 10px;"> y e s </button>
+        <button type="button" id="choose-replay-no-btn" style="margin-top: 10px;"> n o </button>
+      </form>
+    </div>
+    <script>
+      // Make the DIV element draggable:
+      dragElement(document.getElementById("winning-msg-box"));
+
+      function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "header")) {
+          // if present, the header is where you move the DIV from:
+          document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+        } else {
+          // otherwise, move the DIV from anywhere inside the DIV:
+          elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // get the mouse cursor position at startup:
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          // call a function whenever the cursor moves:
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          // calculate the new cursor position:
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          // set the element's new position:
+          elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+          elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+          // stop moving when mouse button is released:
+          document.onmouseup = null;
+          document.onmousemove = null;
+        }
+      }          
+    </script>      
   </script>
   <!-- jQuery! -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
