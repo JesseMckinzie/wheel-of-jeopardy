@@ -119,7 +119,13 @@ jQuery(function($){
                     $('.wheel-container').append('<img class="video" id="video-lost-pts" src="/img/gif/' + App.lostGifs[App.lostGifIndex] + '" alt="current-profile-pic">');
                     App.lostGifIndex = (App.lostGifIndex + 1) % App.lostGifs.length;
                 };
-            });                       
+            });     
+            IO.socket.on('start-3-sec-countdown', () => {
+                clearInterval(App.fiveSecondCountdownID);
+                clearInterval(App.tenSecondCountdownID);
+                $('#timer').text("00:03");
+                App.startTimer(2, $('#timer'));
+            });                  
         }
     };
 
@@ -284,10 +290,6 @@ jQuery(function($){
          */         
         onChooseQuestionVal: function() {
             if (App.gameStarted) {
-                clearInterval(App.fiveSecondCountdownID);
-                clearInterval(App.tenSecondCountdownID);
-                $('#timer').text("00:03");
-                App.startTimer(2, $('#timer'));
                 if (App.currentPlayer) {
                     var qVal = $('input[name=pt-val-radio-btn]:checked', '#choose-q-val').val();
                     if (qVal) {
