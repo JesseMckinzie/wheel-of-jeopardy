@@ -1,6 +1,7 @@
 var io;
 var gameSocket;
 const axios = require('axios');
+const User = require("./models").User;
 var fs = require('fs');
 parseString = require("xml2js").parseString;
 xml2js = require("xml2js");
@@ -530,7 +531,9 @@ const determineWinnerOfBuzzIn = () => {
       };
       winner.message = "Game over!"
       io.emit('chat-message-bounce', {username: "System", msg: `The winner is ${winner.winner}!`});
-      io.emit('game-end', winner)     
+      io.emit('game-end', winner)   
+      
+      updateDatabase(playerScores);  
       // flush all variables
       numOfActivePlayers = 0;
       players = [];
@@ -644,4 +647,32 @@ const determineWinnerOfBuzzIn = () => {
     //io.emit("playerJoinedGame", players);
     //PUSH TEST - MORGAN
   });
+}
+
+const updateDatabase = (scores) => {
+  for(var i = 0; i < players.length; ++i){
+    User.findOne({
+      where: {
+          username: players[i].username
+      },
+    }).then((user) => {
+        if(user){
+            var newScore = user.cumulativeScore + scores[i];
+            var newGamesPlayed = user.gamesPlayed + 1;
+
+            user.update({
+              cumulativeScore: newScore,
+              gamesPlayed: newGamesPlayed
+              
+            })
+            if(scores[i] > user.highScore){
+              user.update({
+                highScore: scores[i]
+              })
+            }
+        } else{ 
+          console.log("Error updating user info.")
+        }
+    })
+  }
 }

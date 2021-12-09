@@ -4,6 +4,9 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const url = require('url');
 const alert = require('alert'); 
+const { REPL_MODE_SLOPPY } = require("repl");
+const User = require("../models").User;
+const { token } = require("morgan");
 
 let gameIds = [0] // list to hold all game IDs
 var games = {}; // dictionary to hold all active game IDs and passcode
@@ -28,7 +31,28 @@ router.post(`/`, (req, res) => {
         // Go back
         res.render('join', {username})
     } else if (buttonPressed == "view-profile") {
-        res.render('profile', {username});
+        const user = req.user.username;
+        const mail = req.user.email;
+        var cumulativeScore, highScore, gamesPlayed;
+        User.findOne({
+            where: {
+                username: user,
+                email: mail
+            },
+        }).then((user) => {
+            if(user){
+                //console.log(user);
+    
+                cumulativeScore = user.cumulativeScore;
+                highScore = user.highScore;
+                gamesPlayed = user.gamesPlayed;
+    
+            } else{ 
+                alert("Error retrieving user info.");
+            }
+        }).then(() => {
+            res.render('profile', {username, mail, gamesPlayed});
+        });
     } else if (buttonPressed == "logout") {
         res.redirect('/logout')
     } else {
@@ -37,11 +61,10 @@ router.post(`/`, (req, res) => {
 });
 
 /* POST view profile page */
-router.post(`/profile`, (req, res) => {
-    var buttonPressed = req.body.button;
+router.post(`/profile`, (req, res) => {    
 
     if (buttonPressed == "back") {
-        res.redirect('/lobby');
+        res.redirect('/');
     } else if (buttonPressed == "logout") {
         res.redirect('/logout')
     } else {
