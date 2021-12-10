@@ -62,7 +62,7 @@ router.post(`/`, (req, res) => {
 
 /* POST view profile page */
 router.post(`/profile`, (req, res) => {    
-
+    var buttonPressed = req.body.button;
     if (buttonPressed == "back") {
         res.redirect('/');
     } else if (buttonPressed == "logout") {

@@ -380,6 +380,7 @@ const determineWinnerOfBuzzIn = () => {
       };
     });
     console.log(qPointValues[chosenQCat]);
+    io.emit('start-3-sec-countdown');
     
     // Delay 3 seconds before sending question
     function sendQuestionDelay() {
